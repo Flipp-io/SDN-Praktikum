@@ -7,18 +7,28 @@
 ### 1. POX-Controller starten
 ```bash
 cd ~/pox
-./pox.py forwarding.l2_learning
+./pox.py forwarding.l2_learning  samples.pretty_log --DEBUG
 ```
 
 ### 2. Mininet starten
+In einer zweiten Bash:
 ```bash
 sudo mn --topo=single,2 --controller=remote --mac
 ```
+Die option "--mac" sorgt dafür, dass die Hosts einfach lesbare MAC-Adressen erhalten.
 
 ### 3. Testen mit `ping`
 ```bash
 mininet> pingall
 ```
+Achtet auch auf die Ausgabe des Controllers.
+
+### 4. FLowtable des Switches ausgeben lassen
+```bash
+mininet> dpctl dump-flows
+```
+Findet ihr die MAC- und IP-Adressen der Hosts wieder? 
+Was soll der Switch mit den Paketen dieses Flows machen?
 
 ---
 
