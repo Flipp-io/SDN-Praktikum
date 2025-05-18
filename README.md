@@ -12,7 +12,7 @@ cd ~/pox
 
 ### 2. Mininet starten
 ```bash
-sudo mn --topo=single,2 --controller=remote
+sudo mn --topo=single,2 --controller=remote --mac
 ```
 
 ### 3. Testen mit `ping`
