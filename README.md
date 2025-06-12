@@ -23,7 +23,7 @@ mininet> pingall
 ```
 Achtet auch auf die Ausgabe des Controllers.
 
-### 4. FLowtable des Switches ausgeben lassen
+### 4. Flowtable des Switches ausgeben lassen
 ```bash
 mininet> dpctl dump-flows
 ```
