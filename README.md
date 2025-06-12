@@ -1,8 +1,7 @@
-# SDN-Praktikum
-
-## Praktikum: SDN mit Mininet, POX und Ryu
+# SDN-Praktikum: SDN mit Mininet und POX
 ---
 ## A. Mininet mit POX verwenden
+Dieses erste Szenario soll helfen euch mit Mininet und Pox vertraut zu machen.
 
 ### 1. POX-Controller starten
 ```bash
