@@ -168,6 +168,9 @@ Der Controller kann mit diesem Befehl gestartet werden:
 - 
 
 
+### Bonus falls noch Zeit
+Erweitert die Logik-Regeln, sodass sie auf ganze Subnetze angewendet werden und nicht nur auf einzelne Hosts.
+
 
 ### Fragen
 1. Was sind typische Merkmale einer SDN-basierten Firewall im Vergleich zu einer traditionellen?
