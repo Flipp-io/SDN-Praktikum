@@ -35,7 +35,7 @@ Was soll der Switch mit den Paketen dieses Flows machen?
 In diesem Versuch sollt ihr eine einfache Firewall mit statischen Regeln implementieren, die eingehenden und ausgehenden Verkehr basierend auf IP-Adressen, Protokollen und Ports blockiert oder erlaubt. Die Filter-Regeln sollt ihr selbst festlegen und im Code umsetzen.
 
 ### Mininet-Topologie
-Folgendes als "custom_topo.py" abspeichern:
+Speichert folgendes als "custom_topo.py" ab oder pullt die Datei aus diesem Repo:
 ```bash
 from mininet.topo import Topo
 
@@ -65,7 +65,7 @@ sudo mn --custom custom_topo.py --topo sdnfirewall --controller=remote --mac -x
 
 
 ### POX-Modul
-Der Großteil des Controller-Codes ist bereits für euch vorbereitet. Speichert folgendes als "pox_firewall_acl.py" ab:
+Der Großteil des Controller-Codes ist bereits für euch vorbereitet. Speichert folgendes als "pox_firewall_acl.py" ab (oder pullt es aus diesem Repo):
 ```bash
 from pox.core import core
 import pox.openflow.libopenflow_01 as of
