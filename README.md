@@ -32,7 +32,7 @@ Was soll der Switch mit den Paketen dieses Flows machen?
 ---
 
 ## B. SDN-Firewall mit statischer ACL
-Implementieren einer einfachen Firewall mit statischen Regeln, die eingehenden und ausgehenden Verkehr basierend auf IP-Adressen, Protokollen und Ports blockiert oder erlaubt. Da der Controller zentral über die Paketverarbeitung entscheidet, muss keine dedizierte Firewall an den Netzgrenzen installiert werden.
+In diesem Versuch sollt ihr eine einfache Firewall mit statischen Regeln implementieren, die eingehenden und ausgehenden Verkehr basierend auf IP-Adressen, Protokollen und Ports blockiert oder erlaubt. Die Filter-Regeln sollt ihr selbst festlegen und im Code umsetzen.
 
 ### Mininet-Topologie
 Folgendes als "custom_topo.py" abspeichern:
@@ -62,8 +62,10 @@ Die Topologie kann mit diesem Befehl gestartet werden:
 sudo mn --custom custom_topo.py --topo sdnfirewall --controller=remote --mac -x
 ```
 '-x' -> Öffnet jeden Host in einem eigenem Fenster.
+
+
 ### POX-Modul
-Folgendes als "pox_firewall_acl.py" speichern:
+Der Großteil des Controller-Codes ist bereits für euch vorbereitet. Speichert folgendes als "pox_firewall_acl.py" ab:
 ```bash
 from pox.core import core
 import pox.openflow.libopenflow_01 as of
@@ -91,7 +93,7 @@ class SimpleFirewall (object):
             self._allow_packet(event)
             return
 
-        # --- Sektion A: Extrahiere relevante Felder ---
+        # --- Sektion A: relevante Felder extrahieren ---
         # TODO: Studenten sollen Quell-/Ziel-IP, Protokoll, Ports extrahieren
         src_ip = ip_packet.srcip
         dst_ip = ip_packet.dstip
@@ -153,6 +155,12 @@ Der Controller kann mit diesem Befehl gestartet werden:
 ./pox.py log.level --DEBUG pox_firewall_acl
 ```
 
+
+
+
+### Fragen
+1. Was sind typische Merkmale einer SDN-basierten Firewall im Vergleich zu einer traditionellen?
+2. Welche Vorteile bietet eine zentrale Regelverwaltung via Controller?
 
 ---
 ---
