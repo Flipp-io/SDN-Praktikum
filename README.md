@@ -34,6 +34,35 @@ Was soll der Switch mit den Paketen dieses Flows machen?
 ## B. SDN-Firewall mit statischer ACL
 Implementieren einer einfachen Firewall mit statischen Regeln, die eingehenden und ausgehenden Verkehr basierend auf IP-Adressen, Protokollen und Ports blockiert oder erlaubt. Da der Controller zentral über die Paketverarbeitung entscheidet, muss keine dedizierte Firewall an den Netzgrenzen installiert werden.
 
+### Mininet-Topologie
+Folgendes als "custom_topo.py" abspeichern:
+```bash
+from mininet.topo import Topo
+
+class SDNFirewallTopo(Topo):
+    def build(self):
+        # Switch
+        s1 = self.addSwitch('s1')
+
+        # Hosts
+        h1 = self.addHost('h1', ip='10.0.0.1/24')  # interner Client
+        h2 = self.addHost('h2', ip='10.0.0.2/24')  # Server
+        h3 = self.addHost('h3', ip='10.0.0.3/24')  # externer Client
+
+        # Links
+        self.addLink(h1, s1)
+        self.addLink(h2, s1)
+        self.addLink(h3, s1)
+
+topos = { 'sdnfirewall': (lambda: SDNFirewallTopo()) }
+```
+Diese Topologie enthält einen internen Client, einen Server und einen externen Client. Alle Hosts befinden sich im selben Subnetz (10.0.0.0/24).
+Die Topologie kann mit diesem Befehl gestartet werden:
+```bash
+sudo mn --custom custom_topo.py --topo sdnfirewall --controller=remote --mac
+```
+
+
 ---
 ---
 ---
