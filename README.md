@@ -34,7 +34,9 @@ Was soll der Switch mit den Paketen dieses Flows machen?
 ## B. SDN-Firewall mit statischer ACL
 In diesem Versuch sollt ihr eine einfache Firewall mit statischen Regeln implementieren, die eingehenden und ausgehenden Verkehr basierend auf IP-Adressen, Protokollen und Ports blockiert oder erlaubt. Die Filter-Regeln sollt ihr selbst festlegen und im Code umsetzen.
 
-### Mininet-Topologie
+### Vorbereitung
+
+#### Mininet-Topologie
 Speichert folgendes als "custom_topo.py" ab oder pullt die Datei aus diesem Repo:
 ```bash
 from mininet.topo import Topo
@@ -64,7 +66,7 @@ sudo mn --custom custom_topo.py --topo sdnfirewall --controller=remote --mac -x
 '-x' -> Öffnet jeden Host in einem eigenem Fenster.
 
 
-### POX-Modul
+#### POX-Modul
 Der Großteil des Controller-Codes ist bereits für euch vorbereitet. Speichert folgendes als "pox_firewall_acl.py" ab (oder pullt es aus diesem Repo):
 ```bash
 from pox.core import core
@@ -155,6 +157,15 @@ Der Controller kann mit diesem Befehl gestartet werden:
 ./pox.py log.level --DEBUG pox_firewall_acl
 ```
 
+### Durchführung
+
+- Startet den Controller
+- Startet die Mininet-Topologie
+- Prüft die Erreichbarkeit der Hosts untereinander (Ping, HTTP)
+- Schaut euch den Code des POX-Controllers an und versucht ihn nachzuvollziehen
+- Überlegt euch sinnvolle Regeln, die die Sicherheit im Netzwerk erhöhen
+- implementiert die Regeln im Code
+- 
 
 
 
