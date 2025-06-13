@@ -59,9 +59,9 @@ topos = { 'sdnfirewall': (lambda: SDNFirewallTopo()) }
 Diese Topologie enthält einen internen Client, einen Server und einen externen Client. Alle Hosts befinden sich im selben Subnetz (10.0.0.0/24).
 Die Topologie kann mit diesem Befehl gestartet werden:
 ```bash
-sudo mn --custom custom_topo.py --topo sdnfirewall --controller=remote --mac
+sudo mn --custom custom_topo.py --topo sdnfirewall --controller=remote --mac -x
 ```
-
+'-x' -> Öffnet jeden Host in einem eigenem Fenster.
 ### POX-Modul
 Folgendes als "pox_firewall_acl.py" speichern:
 ```bash
