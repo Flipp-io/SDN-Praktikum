@@ -31,6 +31,12 @@ Was soll der Switch mit den Paketen dieses Flows machen?
 
 ---
 
+## B. SDN-Firewall mit statischer ACL
+Implementieren einer einfachen Firewall mit statischen Regeln, die eingehenden und ausgehenden Verkehr basierend auf IP-Adressen, Protokollen und Ports blockiert oder erlaubt. Da der Controller zentral über die Paketverarbeitung entscheidet, muss keine dedizierte Firewall an den Netzgrenzen installiert werden.
+
+---
+---
+---
 ## 🔧 B. Mininet mit Ryu verwenden
 
 ### 1. Ryu starten
