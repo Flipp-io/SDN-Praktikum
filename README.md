@@ -161,6 +161,8 @@ Der Controller kann mit diesem Befehl gestartet werden:
 ### Fragen
 1. Was sind typische Merkmale einer SDN-basierten Firewall im Vergleich zu einer traditionellen?
 2. Welche Vorteile bietet eine zentrale Regelverwaltung via Controller?
+3. Was fällt euch auf wenn ihr euch die Flowtable ausgeben lasst? (Befehl in Mininet: dpctl dump-flows)
+   - Antwort: Alle erlaubten Pakete werden geflutet statt an einen gezielten Port weitergeleitet.
 
 ---
 ---
