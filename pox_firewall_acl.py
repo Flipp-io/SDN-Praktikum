@@ -49,10 +49,10 @@ class SimpleFirewall (object):
         # --- Sektion B: Entscheidung gemäß ACL ---
         # Sektion B: Entscheidung wird hier nur ausgeführt – keine Änderungen nötig.
         if self.is_blocked(src_ip, dst_ip, proto, dst_port):
-            log.info("Blockiert: %s → %s (proto %s, port %s)", src_ip, dst_ip, proto, dst_port)
+            log.info("Blockiert: %s -> %s (proto %s, port %s)", src_ip, dst_ip, proto, dst_port)
             return  # Paket wird nicht weitergeleitet
         else:
-            log.info("Erlaubt: %s → %s", src_ip, dst_ip)
+            log.info("Erlaubt: %s -> %s", src_ip, dst_ip)
             self._allow_packet(event)
 
     # --- Sektion C: Statische ACL ---
