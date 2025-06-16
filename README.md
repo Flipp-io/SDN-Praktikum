@@ -88,7 +88,7 @@ topos = { 'sdnfirewall': (lambda: SDNFirewallTopo()) }
 Diese Topologie enthält einen internen Client, einen Server und einen externen Client. Alle Hosts befinden sich im selben Subnetz (10.0.0.0/24).
 Die Topologie kann mit diesem Befehl gestartet werden:
 ```bash
-sudo mn --custom custom_topo.py --topo sdnfirewall --controller=remote --mac -x
+sudo mn --custom custom_topo.py --topo sdnfirewall --controller=remote,ip=127.0.0.1,port=6633 --mac -x
 ```
 Hinweis: 
 '--mac' -> die Hosts erhalten einfcher zu lesende MAC-Adressen
@@ -150,10 +150,10 @@ class SimpleFirewall (object):
         # --- Sektion B: Entscheidung gemäß ACL ---
         # Sektion B: Entscheidung wird hier nur ausgeführt – keine Änderungen nötig.
         if self.is_blocked(src_ip, dst_ip, proto, dst_port):
-            log.info("Blockiert: %s → %s (proto %s, port %s)", src_ip, dst_ip, proto, dst_port)
+            log.info("Blockiert: %s -> %s (proto %s, port %s)", src_ip, dst_ip, proto, dst_port)
             return  # Paket wird nicht weitergeleitet
         else:
-            log.info("Erlaubt: %s → %s", src_ip, dst_ip)
+            log.info("Erlaubt: %s -> %s", src_ip, dst_ip)
             self._allow_packet(event)
 
     # --- Sektion C: Statische ACL ---
@@ -191,14 +191,14 @@ cp ~/SDN-Praktikum/pox_firewall_acl.py ~/pox/pox_firewall_acl.py
 
 Der Controller kann mit diesem Befehl gestartet werden:
 ```bash
-~/pox/pox.py log.level --DEBUG pox_firewall_acl
+~/pox/pox.py samples.pretty_log --DEBUG pox_firewall_acl
 ```
 
 ### Durchführung
 
 - Startet den Controller:
 ```bash
-~/pox/pox.py log.level --DEBUG pox_firewall_acl
+~/pox/pox.py samples.pretty_log --DEBUG pox_firewall_acl
 ```
 - Startet in einem zweiten Terminal die Mininet-Topologie:
 ```bash
