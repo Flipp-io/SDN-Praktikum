@@ -63,7 +63,9 @@ Die Topologie kann mit diesem Befehl gestartet werden:
 ```bash
 sudo mn --custom custom_topo.py --topo sdnfirewall --controller=remote --mac -x
 ```
-'-x' -> Öffnet jeden Host in einem eigenem Fenster.
+Hinweis: 
+'--mac' -> die Hosts erhalten einfcher zu lesende MAC-Adressen
+'-x' -> Öffnet jeden Host in einem eigenem Terminal-Fenster.
 
 
 #### POX-Modul
@@ -164,19 +166,28 @@ Der Controller kann mit diesem Befehl gestartet werden:
 - Prüft die Erreichbarkeit der Hosts untereinander (Ping, HTTP)
 - Schaut euch den Code des POX-Controllers an und versucht ihn nachzuvollziehen
 - Überlegt euch sinnvolle Regeln, die die Sicherheit im Netzwerk erhöhen
-- implementiert die Regeln im Code
-- 
-
-
-### Bonus falls noch Zeit
-Erweitert die Logik-Regeln, sodass sie auf ganze Subnetze angewendet werden und nicht nur auf einzelne Hosts.
-
+    - möglicher Regelsatz:
+    - ICMP (Ping) von h3 zu h2 blockieren
+    - SSH von h3 zu h2 blockieren
+    - aber HTTP von h3 zu h2 erlaubt
+    - ICMP und SSH und HTTP von h1 zu h2 erlaubt
+- Implementiert die Regeln im Code (in der 'is_blocked'-Methode)
+- Überprüft, ob die Regeln wirksam sind
 
 ### Fragen
 1. Was sind typische Merkmale einer SDN-basierten Firewall im Vergleich zu einer traditionellen?
 2. Welche Vorteile bietet eine zentrale Regelverwaltung via Controller?
 3. Was fällt euch auf wenn ihr euch die Flowtable ausgeben lasst? (Befehl in Mininet: dpctl dump-flows)
    - Antwort: Alle erlaubten Pakete werden geflutet statt an einen gezielten Port weitergeleitet.
+
+### Bonus falls noch Zeit
+- Erweitert die Logik-Regeln, sodass sie auf ganze Subnetze angewendet werden und nicht nur auf einzelne Hosts. Dafür müssen ggf andere IP-Adressen an die Hosts vergeben werden (anzupassen in der Mininet-Topologie).
+- fügt einen weiteren Host in der Topologie hinzu oder ändert die IP-Adressen der vorhandenen Hosts. Prüft, ob die Regeln weiterhin wie gewünscht angewendet werden
+
+### weiterer Bonus falls noch Zeit
+
+
+
 
 ---
 ---
