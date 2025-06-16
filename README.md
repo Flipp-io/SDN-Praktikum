@@ -1,5 +1,8 @@
 # SDN-Praktikum: SDN mit Mininet und POX
 ---
+
+Dieses Repo pullen um die Dateien nicht händisch kopieren zu müssen.
+
 ## A. Mininet mit POX verwenden
 Dieses erste Szenario soll helfen euch mit Mininet und Pox vertraut zu machen. Das Prinzip von SDN wird hier zunächst auf Layer 2 umgesetzt, indem ein Switch neue Flowtable-Einträge von einem Controller zugewiesen bekommt.
 
