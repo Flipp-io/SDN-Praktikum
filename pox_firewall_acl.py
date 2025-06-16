@@ -70,6 +70,7 @@ class SimpleFirewall (object):
         # Flow installieren, damit Paket durchgeht
         msg = of.ofp_flow_mod()
         msg.match = of.ofp_match.from_packet(event.parsed)
+        msg.idle_timeout = 30
         msg.actions.append(of.ofp_action_output(port=of.OFPP_FLOOD))
         msg.data = event.ofp
         self.connection.send(msg)
