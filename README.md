@@ -5,8 +5,9 @@ Ihr könnt dieses Repo in das Home-Verzeichnis der VM clonen, um die Dateien nic
 ```bash
 git clone https://github.com/Flipp-io/SDN-Praktikum.git
 ```
-Die Befehle zum Starten des Controllers und der Topologie führt ihr dann aus dem geclonten Ordner heraus aus.
+Den Befehl zum Starten der Topologie führt ihr dann aus dem geclonten Ordner heraus aus.
 
+---
 
 ## Wichtige Mininet-Befehle
 Wenn ein Befehl mit "mininet>" beginnt, ist er in der Mininet-CLI auszuführen, nicht im Terminal-Fenster eines Hosts.
@@ -26,9 +27,9 @@ Die Topologie beenden:
 mininet> exit
 ```
 
+---
 
-
-## A. Mininet mit POX verwenden
+## A. Aufwärmübung: Mininet mit POX verwenden
 Dieses erste Szenario soll helfen euch mit Mininet und Pox vertraut zu machen. Das Prinzip von SDN wird hier zunächst auf Layer 2 umgesetzt, indem ein Switch neue Flowtable-Einträge von einem Controller zugewiesen bekommt.
 
 ### 1. POX-Controller starten
@@ -39,9 +40,11 @@ Dieses erste Szenario soll helfen euch mit Mininet und Pox vertraut zu machen. D
 ### 2. Mininet starten
 In einer zweiten Bash:
 ```bash
-sudo mn --topo=single,2 --controller=remote --mac
+sudo mn --topo=single,2 --controller=remote --mac -x
 ```
-Die option "--mac" sorgt dafür, dass die Hosts einfach lesbare MAC-Adressen erhalten.
+Hinweise zu den Schaltern: 
+'--mac' -> die Hosts erhalten einfacher zu lesende MAC-Adressen  
+'-x' -> öffnet für jeden Host ein eigenes Terminal-Fenster.
 
 ### 3. Testen mit `ping`
 ```bash
@@ -68,139 +71,33 @@ Was soll der Switch mit den Paketen dieses Flows machen?
 ## B. SDN-Firewall mit statischer ACL
 In diesem Versuch sollt ihr eine einfache Firewall mit statischen Regeln implementieren, die eingehenden und ausgehenden Verkehr basierend auf IP-Adressen, Protokollen und Ports blockiert oder erlaubt. Die Filter-Regeln sollt ihr selbst festlegen und im Code umsetzen.
 
+
+
 ### Vorbereitung
 
 #### Mininet-Topologie
-Speichert folgendes als "custom_topo.py" ab oder pullt die Datei aus diesem Repo:
-```bash
-from mininet.topo import Topo
-
-class SDNFirewallTopo(Topo):
-    def build(self):
-        # Switch
-        s1 = self.addSwitch('s1')
-
-        # Hosts
-        h1 = self.addHost('h1', ip='10.0.0.1/24')  # interner Client
-        h2 = self.addHost('h2', ip='10.0.0.2/24')  # Server
-        h3 = self.addHost('h3', ip='10.0.0.3/24')  # externer Client
-
-        # Links
-        self.addLink(h1, s1)
-        self.addLink(h2, s1)
-        self.addLink(h3, s1)
-
-topos = { 'sdnfirewall': (lambda: SDNFirewallTopo()) }
-```
-Diese Topologie enthält einen internen Client, einen Server und einen externen Client. Alle Hosts befinden sich im selben Subnetz (10.0.0.0/24).
+Der Code für die Netzwerktopologie ist in der Datei "custom_topo.py" zu finden.  
+Diese Topologie enthält einen internen Client (h1), einen Server (h2) und einen externen Client (h3). Auf  Alle Hosts befinden sich im selben Subnetz (10.0.0.0/24). Auf h2 soll ein Webserver laufen.  
 Die Topologie kann mit diesem Befehl gestartet werden:
 ```bash
 sudo mn --custom custom_topo.py --topo sdnfirewall --controller=remote,ip=127.0.0.1,port=6633 --mac -x
 ```
-Hinweis: 
-'--mac' -> die Hosts erhalten einfcher zu lesende MAC-Adressen
-'-x' -> Öffnet jeden Host in einem eigenem Terminal-Fenster.
+
 
 
 #### POX-Modul
-Der Großteil des Controller-Codes ist bereits für euch vorbereitet. Speichert folgenden Code als "pox_firewall_acl.py" im Verzeichnis "~/pox" ab:
-
-```bash
-from pox.core import core
-import pox.openflow.libopenflow_01 as of
-from pox.lib.packet import ethernet, ipv4, tcp, udp, icmp
-from pox.lib.addresses import IPAddr
-
-log = core.getLogger()
-
-class SimpleFirewall (object):
-    def __init__(self, connection):
-        self.connection = connection
-        connection.addListeners(self)
-        log.info("Firewall-Controller verbunden mit %s", connection)
-
-    def _handle_PacketIn(self, event):
-        packet = event.parsed
-
-        if not packet.parsed:
-            log.warning("Unverständliches Paket")
-            return
-
-        ip_packet = packet.find('ipv4')
-        if ip_packet is None:
-            # Kein IP-Paket → z. B. ARP → durchlassen
-            self._allow_packet(event)
-            return
-
-        # --- Sektion A: relevante Felder extrahieren ---
-        # TODO: Studenten sollen Quell-/Ziel-IP, Protokoll, Ports extrahieren
-        src_ip = ip_packet.srcip
-        dst_ip = ip_packet.dstip
-        proto = ip_packet.protocol
-
-        src_port = None
-        dst_port = None
-
-        if proto == ipv4.ICMP_PROTOCOL:
-            pass  # ICMP → keine Ports
-        elif proto == ipv4.TCP_PROTOCOL:
-            tcp_packet = packet.find('tcp')
-            if tcp_packet:
-                src_port = tcp_packet.srcport
-                dst_port = tcp_packet.dstport
-        elif proto == ipv4.UDP_PROTOCOL:
-            udp_packet = packet.find('udp')
-            if udp_packet:
-                src_port = udp_packet.srcport
-                dst_port = udp_packet.dstport
-
-        # --- Sektion B: Entscheidung gemäß ACL ---
-        # Sektion B: Entscheidung wird hier nur ausgeführt – keine Änderungen nötig.
-        if self.is_blocked(src_ip, dst_ip, proto, dst_port):
-            log.info("Blockiert: %s -> %s (proto %s, port %s)", src_ip, dst_ip, proto, dst_port)
-            return  # Paket wird nicht weitergeleitet
-        else:
-            log.info("Erlaubt: %s -> %s", src_ip, dst_ip)
-            self._allow_packet(event)
-
-    # --- Sektion C: Statische ACL ---
-    # TODO: Studenten sollen hier Regeln ergänzen
-    def is_blocked(self, src, dst, proto, dport):
-        # Beispiel: ICMP von externem Client blockieren
-        # if src == IPAddr("10.0.0.3") and proto == ipv4.ICMP_PROTOCOL:
-        #     return True
-        # Beispiel: TCP Port 22 (SSH) von extern blockieren
-        # if src == IPAddr("10.0.0.3") and proto == ipv4.TCP_PROTOCOL and dport == 22:
-        #     return True
-        return False
-
-    def _allow_packet(self, event):
-        # Flow installieren, damit Paket durchgeht
-        msg = of.ofp_flow_mod()
-        msg.match = of.ofp_match.from_packet(event.parsed)
-        msg.idle_timeout = 30
-        msg.actions.append(of.ofp_action_output(port=of.OFPP_FLOOD))
-        msg.data = event.ofp
-        self.connection.send(msg)
-
-def launch():
-    def start_switch(event):
-        log.info("Starte Firewall auf %s", event.connection)
-        SimpleFirewall(event.connection)
-    core.openflow.addListenerByName("ConnectionUp", start_switch)
-
-```
-
-Falls ihr das Repo ins Home-Verzeichnis geclonet habt, könnt ihr stattdessen die Datei mit folgendem Befehl kopieren:
+Der Großteil des Controller-Codes ist bereits für euch vorbereitet. Speichert den Code aus der Datei "pox_firewall_acl.py" im Verzeichnis "~/pox" ab.
+Falls ihr das Repo ins Home-Verzeichnis geclonet habt, könnt ihr die Datei mit folgendem Befehl an die richtige Stelle kopieren:
 ```bash
 cp ~/SDN-Praktikum/pox_firewall_acl.py ~/pox/pox_firewall_acl.py
 ```
-
 
 Der Controller kann mit diesem Befehl gestartet werden:
 ```bash
 ~/pox/pox.py samples.pretty_log --DEBUG pox_firewall_acl
 ```
+
+
 
 ### Durchführung
 
@@ -237,15 +134,12 @@ h1> curl 10.0.0.2
 - Überprüft, ob die Regeln wirksam sind
 
 
-### Fragen Allgemein SDN
-1. Was sind typische Merkmale einer SDN-basierten Firewall im Vergleich zu einer traditionellen?
-2. Welche Vorteile bietet eine zentrale Regelverwaltung via Controller?
 
 ### Fragen zum Versuch
-4. Was fällt euch auf, wenn ihr euch die Flowtable ausgeben lasst? (Befehl in Mininet: "dpctl dump-flows --color=always")
+1. Was fällt euch auf, wenn ihr euch die Flowtable ausgeben lasst? Was passiert mit den Paketen? (Befehl in Mininet: "dpctl dump-flows --color=always")
    - Antwort: Alle erlaubten Pakete werden geflutet statt an einen gezielten Port weitergeleitet.
-5. Bisher werden nur für die erlaubten Pakete Flows in den Switches installiert. Was passiert mit den anderen Paketen? Was hat das für eine Auswirkung? Kann man als Angreifer dieses Verhalten ggf ausnutzen? Wie kann man das Problem lösen?
-    - Pakete werden verworfen, neue Pakete desselben zu blockierenden Flows werden weiterhin an den Controller weitergeleitet. Dadurch kann der Controller überlastet werden. Schlauer wäre es, die Pakete bereits an den Switches zu verwerfen und dafür einen Flow im Switch zu installieren.
+2. Bisher werden nur für die erlaubten Pakete Flows in den Switches installiert. Was passiert mit den anderen Paketen? Was hat das für eine Auswirkung? Kann man als Angreifer dieses Verhalten ggf ausnutzen? Wie kann man das Problem lösen?
+    - Pakete werden vom Controller verworfen, neue Pakete desselben zu blockierenden Flows werden weiterhin an den Controller weitergeleitet. Dadurch kann der Controller überlastet werden. Schlauer wäre es, die Pakete bereits an den Switches zu verwerfen und dafür einen Flow im Switch zu installieren.
 
 ### Bonus falls noch Zeit
 - Erweitert die Logik-Regeln, sodass sie auf ganze Subnetze angewendet werden und nicht nur auf einzelne Hosts. Dafür müssen ggf andere IP-Adressen an die Hosts vergeben werden (anzupassen in der Mininet-Topologie).
@@ -253,4 +147,12 @@ h1> curl 10.0.0.2
 
 ### weiterer Bonus falls noch Zeit
 Flows zum Droppen von Paketen im Switch installieren
-...
+
+### weiterer weiterer Bonus falls noch Zeit
+Lernswitch-Funktionalität ergänzen (sehr fortgeschritten)
+
+
+
+### Fragen Allgemein SDN
+1. Was sind typische Merkmale einer SDN-basierten Firewall im Vergleich zu einer traditionellen?
+2. Welche Vorteile bietet eine zentrale Regelverwaltung via Controller?
