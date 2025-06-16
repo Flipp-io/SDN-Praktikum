@@ -160,11 +160,11 @@ class SimpleFirewall (object):
     # TODO: Studenten sollen hier Regeln ergänzen
     def is_blocked(self, src, dst, proto, dport):
         # Beispiel: ICMP von externem Client blockieren
-        if src == IPAddr("10.0.0.3") and proto == ipv4.ICMP_PROTOCOL:
-            return True
+        # if src == IPAddr("10.0.0.3") and proto == ipv4.ICMP_PROTOCOL:
+        #     return True
         # Beispiel: TCP Port 22 (SSH) von extern blockieren
-        if src == IPAddr("10.0.0.3") and proto == ipv4.TCP_PROTOCOL and dport == 22:
-            return True
+        # if src == IPAddr("10.0.0.3") and proto == ipv4.TCP_PROTOCOL and dport == 22:
+        #     return True
         return False
 
     def _allow_packet(self, event):
