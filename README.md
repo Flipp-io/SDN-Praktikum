@@ -221,6 +221,11 @@ mininet> h2 python3 -m http.server 80 &
 mininet> pingall
 ```
 
+- Prüft die Erreichbarkeit des HTTP-Servers von beiden Clients:
+```bash
+h1> curl 10.0.0.2
+```
+
 - Schaut euch den Code des POX-Controllers an und versucht ihn nachzuvollziehen
 - Überlegt euch sinnvolle Regeln, die die Sicherheit im Netzwerk erhöhen
     - möglicher Regelsatz:
@@ -234,8 +239,10 @@ mininet> pingall
 ### Fragen
 1. Was sind typische Merkmale einer SDN-basierten Firewall im Vergleich zu einer traditionellen?
 2. Welche Vorteile bietet eine zentrale Regelverwaltung via Controller?
-3. Was fällt euch auf wenn ihr euch die Flowtable ausgeben lasst? (Befehl in Mininet: dpctl dump-flows)
+3. Was fällt euch auf, wenn ihr euch die Flowtable ausgeben lasst? (Befehl in Mininet: dpctl dump-flows)
    - Antwort: Alle erlaubten Pakete werden geflutet statt an einen gezielten Port weitergeleitet.
+4. Bisher werden nur für die erlaubten Pakete Flows in den Switches installiert. Was passiert mit den anderen Paketen? Was hat das für eine Auswirkung? Kann man als Angreifer dieses Verhalten ggf ausnutzen? Wie kann man das Problem lösen?
+    - Pakete werden verworfen, neue Pakete desselben zu blockierenden Flows werden weiterhin an den Controller weitergeleitet. Dadurch kann der Controller überlastet werden. Schlauer wäre es, die Pakete bereits an den Switches zu verwerfen und dafür einen Flow im Switch zu installieren.
 
 ### Bonus falls noch Zeit
 - Erweitert die Logik-Regeln, sodass sie auf ganze Subnetze angewendet werden und nicht nur auf einzelne Hosts. Dafür müssen ggf andere IP-Adressen an die Hosts vergeben werden (anzupassen in der Mininet-Topologie).
