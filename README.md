@@ -1,15 +1,39 @@
 # SDN-Praktikum: SDN mit Mininet und POX
 ---
 
-Dieses Repo pullen um die Dateien nicht händisch kopieren zu müssen.
+Ihr könnt dieses Repo in das Home-Verzeichnis der VM clonen, um die Dateien nicht händisch kopieren zu müssen:
+```bash
+git clone https://github.com/Flipp-io/SDN-Praktikum.git
+```
+Die Befehle zum Starten des Controllers und der Topologie führt ihr dann aus dem geclonten Ordner heraus aus.
+
+
+## Wichtige Mininet-Befehle
+Wenn ein Befehl mit "mininet>" beginnt, ist er in der Mininet-CLI auszuführen, nicht im Terminal-Fenster eines Hosts.
+
+Zwischen allen Hosts pingen:
+```bash
+mininet> pingall
+```
+
+Die Flowtable des Switches ausgeben:
+```bash
+mininet> dpctl dump-flows
+```
+
+Die Topologie beenden:
+```bash
+mininet> exit
+```
+
+
 
 ## A. Mininet mit POX verwenden
 Dieses erste Szenario soll helfen euch mit Mininet und Pox vertraut zu machen. Das Prinzip von SDN wird hier zunächst auf Layer 2 umgesetzt, indem ein Switch neue Flowtable-Einträge von einem Controller zugewiesen bekommt.
 
 ### 1. POX-Controller starten
 ```bash
-cd ~/pox
-./pox.py forwarding.l2_learning  samples.pretty_log --DEBUG
+~/pox/pox.py forwarding.l2_learning samples.pretty_log --DEBUG
 ```
 
 ### 2. Mininet starten
@@ -72,7 +96,8 @@ Hinweis:
 
 
 #### POX-Modul
-Der Großteil des Controller-Codes ist bereits für euch vorbereitet. Speichert folgendes als "pox_firewall_acl.py" ab (oder pullt es aus diesem Repo):
+Der Großteil des Controller-Codes ist bereits für euch vorbereitet. Speichert folgenden Code als "pox_firewall_acl.py" im Verzeichnis "~/pox" ab:
+
 ```bash
 from pox.core import core
 import pox.openflow.libopenflow_01 as of
@@ -157,28 +182,35 @@ def launch():
     core.openflow.addListenerByName("ConnectionUp", start_switch)
 
 ```
+
+Falls ihr das Repo ins Home-Verzeichnis geclonet habt, könnt ihr stattdessen die Datei mit folgendem Befehl kopieren:
+```bash
+cp ~/SDN-Praktikum/pox_firewall_acl.py ~/pox/pox_firewall_acl.py
+```
+
+
 Der Controller kann mit diesem Befehl gestartet werden:
 ```bash
-./pox.py log.level --DEBUG pox_firewall_acl
+~/pox/pox.py log.level --DEBUG pox_firewall_acl
 ```
 
 ### Durchführung
 
-- Startet den Controller
+- Startet den Controller:
 ```bash
-./pox.py log.level --DEBUG pox_firewall_acl
+~/pox/pox.py log.level --DEBUG pox_firewall_acl
 ```
-- Startet die Mininet-Topologie
+- Startet in einem zweiten Terminal die Mininet-Topologie:
 ```bash
 sudo mn --custom custom_topo.py --topo sdnfirewall --controller=remote --mac -x
 ```
-- Startet einen HTTP-Server auf h2:
+- Startet einen HTTP-Server auf h2 (den Befehl in der Mininet-CLI ausführen):
 ```bash
-h2 python3 -m http.server 80 &
+mininet> h2 python3 -m http.server 80 &
 ```
 - Prüft die Erreichbarkeit der Hosts untereinander mit Ping:
 ```bash
-pingall
+mininet> pingall
 ```
 
 - Schaut euch den Code des POX-Controllers an und versucht ihn nachzuvollziehen
