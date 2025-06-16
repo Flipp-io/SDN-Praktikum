@@ -124,13 +124,12 @@ h1> curl 10.0.0.2
 ```
 
 - Schaut euch den Code des POX-Controllers an und versucht ihn nachzuvollziehen
-- Überlegt euch sinnvolle Regeln, die die Sicherheit im Netzwerk erhöhen
+- Überlegt euch sinnvolle Regeln, die die Sicherheit im Netzwerk erhöhen.
     - möglicher Regelsatz:
     - ICMP (Ping) von h3 zu h2 blockieren
     - aber HTTP von h3 zu h2 erlauben
     - ICMP und HTTP von h1 zu h2 erlauben
 - Implementiert die Regeln im Code (in der 'is_blocked'-Methode)
-    - Hilfen für die Header-Felder bereit stellen 
 - Überprüft, ob die Regeln wirksam sind
 
 
