@@ -25,7 +25,7 @@ class SimpleFirewall (object):
             return
 
         # --- Sektion A: relevante Felder extrahieren ---
-        # TODO: Studenten sollen Quell-/Ziel-IP, Protokoll, Ports extrahieren
+        # hier werden Quell-/Ziel-IP, Protokoll, Ports aus dem IP-Paket extrahiert
         src_ip = ip_packet.srcip
         dst_ip = ip_packet.dstip
         proto = ip_packet.protocol
@@ -47,16 +47,30 @@ class SimpleFirewall (object):
                 dst_port = udp_packet.dstport
 
         # --- Sektion B: Entscheidung gemäß ACL ---
-        # Sektion B: Entscheidung wird hier nur ausgeführt – keine Änderungen nötig.
         if self.is_blocked(src_ip, dst_ip, proto, dst_port):
             log.info("Blockiert: %s -> %s (proto %s, port %s)", src_ip, dst_ip, proto, dst_port)
             return  # Paket wird nicht weitergeleitet
         else:
-            log.info("Erlaubt: %s -> %s", src_ip, dst_ip)
+            log.info("Erlaubt: %s -> %s (proto %s, port %s)", src_ip, dst_ip, proto, dst_port)
             self._allow_packet(event)
 
     # --- Sektion C: Statische ACL ---
-    # TODO: Studenten sollen hier Regeln ergänzen
+    # TODO: Die Studenten sollen hier Regeln festlegen
+    """
+    # --- Hilfe ---
+    # Syntax für den Vergleich mit einigen gängigen Protokollen:
+    proto == ipv4.TCP_PROTOCOL
+    proto == ipv4.UDP_PROTOCOL
+    proto == ipv4.ICMP_PROTOCOL
+    proto == ipv4.IGMP_PROTOCOL
+
+    # Syntax für den Vergleich mit einer IP-Adresse:
+    ip == IPAddr("192.168.0.1")
+
+    # Syntax um zu prüfen, ob eine IP-Adresse in einem gegebenen Subnetz liegt:
+    if ip in IPNet("10.0.0.0/24"):
+        print("Adresse liegt im Subnetz")
+    """
     def is_blocked(self, src, dst, proto, dport):
         # Beispiel: ICMP von externem Client blockieren
         # if src == IPAddr("10.0.0.3") and proto == ipv4.ICMP_PROTOCOL:
