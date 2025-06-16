@@ -18,7 +18,7 @@ mininet> pingall
 
 Die Flowtable des Switches ausgeben:
 ```bash
-mininet> dpctl dump-flows
+mininet> dpctl dump-flows --color=always
 ```
 
 Die Topologie beenden:
@@ -51,7 +51,7 @@ Achtet auch auf die Ausgabe des Controllers.
 
 ### 4. Flowtable des Switches ausgeben lassen
 ```bash
-mininet> dpctl dump-flows
+mininet> dpctl dump-flows --color=always
 ```
 Findet ihr die MAC- und IP-Adressen der Hosts wieder? 
 Was soll der Switch mit den Paketen dieses Flows machen?
@@ -230,23 +230,27 @@ h1> curl 10.0.0.2
 - Überlegt euch sinnvolle Regeln, die die Sicherheit im Netzwerk erhöhen
     - möglicher Regelsatz:
     - ICMP (Ping) von h3 zu h2 blockieren
-    - SSH von h3 zu h2 blockieren
-    - aber HTTP von h3 zu h2 erlaubt
-    - ICMP und SSH und HTTP von h1 zu h2 erlaubt
+    - aber HTTP von h3 zu h2 erlauben
+    - ICMP und HTTP von h1 zu h2 erlauben
 - Implementiert die Regeln im Code (in der 'is_blocked'-Methode)
+    - Hilfen für die Header-Felder bereit stellen 
 - Überprüft, ob die Regeln wirksam sind
 
-### Fragen
+
+### Fragen Allgemein SDN
 1. Was sind typische Merkmale einer SDN-basierten Firewall im Vergleich zu einer traditionellen?
 2. Welche Vorteile bietet eine zentrale Regelverwaltung via Controller?
-3. Was fällt euch auf, wenn ihr euch die Flowtable ausgeben lasst? (Befehl in Mininet: dpctl dump-flows)
+
+### Fragen zum Versuch
+4. Was fällt euch auf, wenn ihr euch die Flowtable ausgeben lasst? (Befehl in Mininet: "dpctl dump-flows --color=always")
    - Antwort: Alle erlaubten Pakete werden geflutet statt an einen gezielten Port weitergeleitet.
-4. Bisher werden nur für die erlaubten Pakete Flows in den Switches installiert. Was passiert mit den anderen Paketen? Was hat das für eine Auswirkung? Kann man als Angreifer dieses Verhalten ggf ausnutzen? Wie kann man das Problem lösen?
+5. Bisher werden nur für die erlaubten Pakete Flows in den Switches installiert. Was passiert mit den anderen Paketen? Was hat das für eine Auswirkung? Kann man als Angreifer dieses Verhalten ggf ausnutzen? Wie kann man das Problem lösen?
     - Pakete werden verworfen, neue Pakete desselben zu blockierenden Flows werden weiterhin an den Controller weitergeleitet. Dadurch kann der Controller überlastet werden. Schlauer wäre es, die Pakete bereits an den Switches zu verwerfen und dafür einen Flow im Switch zu installieren.
 
 ### Bonus falls noch Zeit
 - Erweitert die Logik-Regeln, sodass sie auf ganze Subnetze angewendet werden und nicht nur auf einzelne Hosts. Dafür müssen ggf andere IP-Adressen an die Hosts vergeben werden (anzupassen in der Mininet-Topologie).
-- fügt einen weiteren Host in der Topologie hinzu oder ändert die IP-Adressen der vorhandenen Hosts. Prüft, ob die Regeln weiterhin wie gewünscht angewendet werden
+- fügt (einen) weitere(n) Host(s) in der Topologie hinzu oder ändert die IP-Adressen der vorhandenen Hosts. Prüft, ob die Regeln weiterhin wie gewünscht angewendet werden
 
 ### weiterer Bonus falls noch Zeit
+Flows zum Droppen von Paketen im Switch installieren
 ...
