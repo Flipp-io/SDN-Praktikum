@@ -165,8 +165,22 @@ Der Controller kann mit diesem Befehl gestartet werden:
 ### Durchführung
 
 - Startet den Controller
+```bash
+./pox.py log.level --DEBUG pox_firewall_acl
+```
 - Startet die Mininet-Topologie
-- Prüft die Erreichbarkeit der Hosts untereinander (Ping, HTTP)
+```bash
+sudo mn --custom custom_topo.py --topo sdnfirewall --controller=remote --mac -x
+```
+- Startet einen HTTP-Server auf h2:
+```bash
+h2 python3 -m http.server 80 &
+```
+- Prüft die Erreichbarkeit der Hosts untereinander mit Ping:
+```bash
+pingall
+```
+
 - Schaut euch den Code des POX-Controllers an und versucht ihn nachzuvollziehen
 - Überlegt euch sinnvolle Regeln, die die Sicherheit im Netzwerk erhöhen
     - möglicher Regelsatz:
