@@ -56,7 +56,14 @@ mininet> dpctl dump-flows
 Findet ihr die MAC- und IP-Adressen der Hosts wieder? 
 Was soll der Switch mit den Paketen dieses Flows machen?
 
+
+
+
 ---
+---
+
+
+
 
 ## B. SDN-Firewall mit statischer ACL
 In diesem Versuch sollt ihr eine einfache Firewall mit statischen Regeln implementieren, die eingehenden und ausgehenden Verkehr basierend auf IP-Adressen, Protokollen und Ports blockiert oder erlaubt. Die Filter-Regeln sollt ihr selbst festlegen und im Code umsetzen.
@@ -171,6 +178,7 @@ class SimpleFirewall (object):
         # Flow installieren, damit Paket durchgeht
         msg = of.ofp_flow_mod()
         msg.match = of.ofp_match.from_packet(event.parsed)
+        msg.idle_timeout = 30
         msg.actions.append(of.ofp_action_output(port=of.OFPP_FLOOD))
         msg.data = event.ofp
         self.connection.send(msg)
@@ -202,7 +210,7 @@ Der Controller kann mit diesem Befehl gestartet werden:
 ```
 - Startet in einem zweiten Terminal die Mininet-Topologie:
 ```bash
-sudo mn --custom custom_topo.py --topo sdnfirewall --controller=remote --mac -x
+sudo mn --custom custom_topo.py --topo sdnfirewall --controller=remote,ip=127.0.0.1,port=6633 --mac -x
 ```
 - Startet einen HTTP-Server auf h2 (den Befehl in der Mininet-CLI ausführen):
 ```bash
