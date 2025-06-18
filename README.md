@@ -40,7 +40,7 @@ Dieses erste Szenario soll helfen euch mit Mininet und Pox vertraut zu machen. D
 ### 2. Mininet starten
 In einer zweiten Bash:
 ```bash
-sudo mn --topo=single,2 --controller=remote --mac -x
+sudo mn --topo=single,2 --controller=remote,port=6633 --mac -x
 ```
 Hinweise zu den Schaltern: 
 '--mac' -> die Hosts erhalten einfacher zu lesende MAC-Adressen  
