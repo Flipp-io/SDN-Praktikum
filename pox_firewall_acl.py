@@ -55,7 +55,7 @@ class SimpleFirewall (object):
             self._allow_packet(event)
 
     # --- Sektion C: Statische ACL ---
-    # TODO: Die Studenten sollen hier Regeln festlegen
+    # TODO: in der Methode "is_blocked" sollt ihr Regeln festlegen
     """
     # --- Hilfe ---
     # Syntax für den Vergleich mit einigen gängigen Protokollen:
@@ -81,7 +81,7 @@ class SimpleFirewall (object):
         return False
 
     def _allow_packet(self, event):
-        # Flow installieren, damit Paket durchgeht
+        # Flow installieren, damit das Paket durchgeht
         msg = of.ofp_flow_mod()
         msg.match = of.ofp_match.from_packet(event.parsed)
         msg.idle_timeout = 30
