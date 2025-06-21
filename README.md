@@ -7,6 +7,11 @@ git clone https://github.com/Flipp-io/SDN-Praktikum.git
 ```
 Den Befehl zum Starten der Topologie führt ihr dann aus dem geclonten Ordner heraus aus.
 
+Curl nachinstallieren:
+```bash
+sudo apt install curl
+```
+
 ---
 
 ## Wichtige Mininet-Befehle
@@ -72,18 +77,7 @@ Was soll der Switch mit den Paketen dieses Flows machen?
 In diesem Versuch sollt ihr eine einfache Firewall mit statischen Regeln implementieren, die eingehenden und ausgehenden Verkehr basierend auf IP-Adressen, Protokollen und Ports blockiert oder erlaubt. Die Filter-Regeln sollt ihr selbst festlegen und im Code umsetzen.
 
 
-
 ### Vorbereitung
-
-#### Mininet-Topologie
-Der Code für die Netzwerktopologie ist in der Datei "custom_topo.py" zu finden.  
-Diese Topologie enthält einen internen Client (h1), einen Server (h2) und einen externen Client (h3). Auf  Alle Hosts befinden sich im selben Subnetz (10.0.0.0/24). Auf h2 soll ein Webserver laufen.  
-Die Topologie kann mit diesem Befehl gestartet werden:
-```bash
-sudo mn --custom custom_topo.py --topo sdnfirewall --controller=remote,ip=127.0.0.1,port=6633 --mac -x
-```
-
-
 
 #### POX-Modul
 Der Großteil des Controller-Codes ist bereits für euch vorbereitet. Speichert den Code aus der Datei "pox_firewall_acl.py" im Verzeichnis "~/pox" ab.
@@ -96,6 +90,17 @@ Der Controller kann mit diesem Befehl gestartet werden:
 ```bash
 ~/pox/pox.py samples.pretty_log --DEBUG pox_firewall_acl
 ```
+
+
+#### Mininet-Topologie
+Der Code für die Netzwerktopologie ist in der Datei "custom_topo.py" zu finden.  
+Diese Topologie enthält einen internen Client (h1), einen Server (h2) und einen externen Client (h3). Alle Hosts befinden sich im selben Subnetz (10.0.0.0/24). Auf h2 soll ein Webserver laufen.  
+Die Topologie kann mit diesem Befehl gestartet werden:
+```bash
+sudo mn --custom custom_topo.py --topo sdnfirewall --controller=remote,ip=127.0.0.1,port=6633 --mac -x
+```
+
+
 
 
 
