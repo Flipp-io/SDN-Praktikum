@@ -123,12 +123,12 @@ mininet> h2 python3 -m http.server 80 &
 mininet> pingall
 ```
 
-- Prüft die Erreichbarkeit des HTTP-Servers von beiden Clients:
+- Prüft die Erreichbarkeit des HTTP-Servers von beiden Clients (h1 und h3):
 ```bash
 h1> curl 10.0.0.2
 ```
 
-- Schaut euch den Code des POX-Controllers an und versucht ihn nachzuvollziehen
+- Schaut euch den Code des POX-Controllers an und versucht ihn nachzuvollziehen (bspw mit dem Editor "emacs" öffnen)
 - Überlegt euch sinnvolle Regeln, die die Sicherheit im Netzwerk erhöhen.
     - möglicher Regelsatz:
     - ICMP (Ping) von h3 zu h2 blockieren
@@ -145,18 +145,21 @@ h1> curl 10.0.0.2
 2. Bisher werden nur für die erlaubten Pakete Flows in den Switches installiert. Was passiert mit den anderen Paketen? Was hat das für eine Auswirkung? Kann man als Angreifer dieses Verhalten ggf ausnutzen? Wie kann man das Problem lösen?
     - Pakete werden vom Controller verworfen, neue Pakete desselben zu blockierenden Flows werden weiterhin an den Controller weitergeleitet. Dadurch kann der Controller überlastet werden. Schlauer wäre es, die Pakete bereits an den Switches zu verwerfen und dafür einen Flow im Switch zu installieren.
 
-### Bonus falls noch Zeit
+### Bonus falls noch Zeit: Erweiterung auf IP-Subnetze
 - Erweitert die Logik-Regeln, sodass sie auf ganze Subnetze angewendet werden und nicht nur auf einzelne Hosts. Dafür müssen ggf andere IP-Adressen an die Hosts vergeben werden (anzupassen in der Mininet-Topologie).
 - fügt (einen) weitere(n) Host(s) in der Topologie hinzu oder ändert die IP-Adressen der vorhandenen Hosts. Prüft, ob die Regeln weiterhin wie gewünscht angewendet werden
 
-### weiterer Bonus falls noch Zeit
+### weiterer Bonus falls noch Zeit: Flows für zu blockierende Pakete
 Flows zum Droppen von Paketen im Switch installieren
 
-### weiterer weiterer Bonus falls noch Zeit
+### weiterer weiterer Bonus falls noch Zeit: Firewall inkl. Lernswitch
 Lernswitch-Funktionalität ergänzen (sehr fortgeschritten)
 
 
 
 ### Fragen Allgemein SDN
 1. Was sind typische Merkmale einer SDN-basierten Firewall im Vergleich zu einer traditionellen?
-2. Welche Vorteile bietet eine zentrale Regelverwaltung via Controller?
+   - es gibt kein dediziertes Gerät an der Netzgrenze, sondern das ganze Netz mit allen Switches und Routern setzt die Firewall-Funktionalität um.
+3. Welche Vorteile bietet eine zentrale Regelverwaltung via Controller?
+   - die Regeln können zentral festgelegt werden.
+   - ein Angreifer, welcher vom Inneren des Netzes aus agiert, wird von einer herkömmlichen Firewall ggf nicht erkannt bzw sie ist machtlos dagegen. Bei einer SDN-Firewall können nach Erkennen des Angriffs von innen trotzdem Maßnahmen ergriffen werden.
