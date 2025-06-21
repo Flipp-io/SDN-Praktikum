@@ -1,7 +1,7 @@
 from pox.core import core
 import pox.openflow.libopenflow_01 as of
 from pox.lib.packet import ethernet, ipv4, tcp, udp, icmp
-from pox.lib.addresses import IPAddr
+from pox.lib.addresses import IPAddr, IPNet
 
 log = core.getLogger()
 
@@ -77,6 +77,10 @@ class SimpleFirewall (object):
         #     return True
         # Beispiel: TCP Port 22 (SSH) von extern blockieren
         # if src == IPAddr("10.0.0.3") and proto == ipv4.TCP_PROTOCOL and dport == 22:
+        #     return True
+        # Beispiel: ICMP von externem Netz zu h2 blockieren
+        # externes_subnetz = IPNet("10.0.3.0/24")
+        # if src in externes_subnetz and dst == interner_host and proto == ipv4.ICMP_PROTOCOL:
         #     return True
         return False
 
