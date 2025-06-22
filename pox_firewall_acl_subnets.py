@@ -87,14 +87,13 @@ class SimpleFirewall (object):
             return False
 
         # Regel 2: gesamten Traffic aus externem Netz blockieren
-        external_network = IPAddr("10.0.3.0/24")
-        if src.inNetwork(external_network):
-            log.info("IP %s befindet sich im externen Netz %s", src_ip, external_network)
+         if src.inNetwork("10.0.3.0/24"):
+            log.info("IP-Adresse %s befindet sich im externen Netz 10.0.3.0/24", src)
             return True
 
         # Regel 3: SSH von internem Netz zur DMZ blockieren
-        # if src in IPNet("10.0.1.0/24") and dst in IPNet("10.0.2.0/24") and proto == ipv4.TCP_PROTOCOL and dport == 22:
-        #     return True
+        if src.inNetwork("10.0.1.0/24") and dst.inNetwork("10.0.2.0/24") and proto == ipv4.TCP_PROTOCOL and dport == 22:
+            return True
         
         # --- Einzelbeispiele für Regeln ---
         # Beispiel: ICMP von externem Client blockieren
