@@ -68,7 +68,7 @@ class SimpleFirewall (object):
     ip == IPAddr("192.168.0.1")
 
     # Syntax um zu prüfen, ob eine IP-Adresse in einem gegebenen Subnetz liegt:
-    if ip in IPNet("10.0.0.0/24"):
+    if src.inNetwork("192.168.1.0/24"):
         print("Adresse liegt im Subnetz")
     """
     def is_blocked(self, src, dst, proto, dport):
