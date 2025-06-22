@@ -1,7 +1,7 @@
 from pox.core import core
 import pox.openflow.libopenflow_01 as of
 from pox.lib.packet import ethernet, ipv4, tcp, udp, icmp
-from pox.lib.addresses import IPAddr, IPNet
+from pox.lib.addresses import IPAddr
 
 log = core.getLogger()
 
