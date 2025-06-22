@@ -11,6 +11,15 @@ Curl nachinstallieren:
 ```bash
 sudo apt install curl
 ```
+Falls die Zwischenablage nicht funktionieren sollte: guest extensions nachinstallieren:
+```bash
+sudo apt isntall virtualbox-guest-x11
+```
+Dann geteilte Zwischenablage starten:
+```bash
+sudo VBoxClient --clipboard
+```
+
 
 ---
 
@@ -94,7 +103,7 @@ Der Controller kann mit diesem Befehl gestartet werden:
 
 #### Mininet-Topologie
 Der Code für die Netzwerktopologie ist in der Datei "custom_topo.py" zu finden.  
-Diese Topologie enthält einen internen Client (h1), einen Server (h2) und einen externen Client (h3). Alle Hosts befinden sich im selben Subnetz (10.0.0.0/24). Auf h2 soll ein Webserver laufen.  
+Diese Topologie enthält einen internen Client (h1), einen Server (h2) und einen externen Client (h3). Alle Hosts befinden sich im selben Subnetz (10.0.0.0/24). Auf h2 sollen ein Webserver und ein SSH-Server laufen.  
 Die Topologie kann mit diesem Befehl gestartet werden:
 ```bash
 sudo mn --custom custom_topo.py --topo sdnfirewall --controller=remote,ip=127.0.0.1,port=6633 --mac -x
@@ -118,6 +127,11 @@ sudo mn --custom custom_topo.py --topo sdnfirewall --controller=remote,ip=127.0.
 ```bash
 mininet> h2 python3 -m http.server 80 &
 ```
+- Startet einen SSH-Server auf h2 (den Befehl in der Mininet-CLI ausführen):
+```bash
+mininet> h2 /usr/sbin/sshd
+```
+
 - Prüft die Erreichbarkeit der Hosts untereinander mit Ping:
 ```bash
 mininet> pingall
@@ -128,12 +142,20 @@ mininet> pingall
 h1> curl 10.0.0.2
 ```
 
+- Prüft die Erreichbarkeit des SSH-Servers von beiden Clients (h1 und h3):
+```bash
+h1> ssh 10.0.0.2
+```
+
 - Schaut euch den Code des POX-Controllers an und versucht ihn nachzuvollziehen (bspw mit dem Editor "emacs" öffnen)
 - Überlegt euch sinnvolle Regeln, die die Sicherheit im Netzwerk erhöhen.
     - möglicher Regelsatz:
-    - ICMP (Ping) von h3 zu h2 blockieren
-    - aber HTTP von h3 zu h2 erlauben
-    - ICMP und HTTP von h1 zu h2 erlauben
+        - keinen Traffic vom externen Client zulassen bis auf Zugriff auf den HTTP-Server
+        - der interne Client darf alles, bis auf SSH zu h2
+    - zusätzliche Mögliche Regeln:
+        - ICMP (Ping) von h3 zu h2 blockieren
+        - aber HTTP von h3 zu h2 erlauben
+        - ICMP und HTTP von h1 zu h2 erlauben
 - Implementiert die Regeln im Code (in der 'is_blocked'-Methode)
 - Überprüft, ob die Regeln wirksam sind
 
