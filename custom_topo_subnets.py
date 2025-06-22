@@ -6,9 +6,11 @@ class SDNFirewallTopo(Topo):
         s1 = self.addSwitch('s1')
 
         # Hosts
-        h1 = self.addHost('h1', ip='10.0.1.1/24')  # interner Client
-        h2 = self.addHost('h2', ip='10.0.2.2/24')  # Server
-        h3 = self.addHost('h3', ip='10.0.3.3/24')  # externer Client
+        # Netzmaske /16 damit sie ohne Routing kommunizieren können
+        h1 = self.addHost('h1', ip='10.0.1.1/16')  # interner Client
+        h2 = self.addHost('h2', ip='10.0.2.2/16')  # Server
+        h3 = self.addHost('h3', ip='10.0.3.3/16')  # externer Client
+        h3 = self.addHost('h4', ip='10.0.2.4/16')  # Client in DMZ
 
         # Links
         self.addLink(h1, s1)
