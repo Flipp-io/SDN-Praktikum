@@ -87,7 +87,7 @@ class SimpleFirewall (object):
             return False
 
         # Regel 2: gesamten Traffic aus externem Netz blockieren
-         if src.inNetwork("10.0.3.0/24"):
+        if src.inNetwork("10.0.3.0/24"):
             log.info("IP-Adresse %s befindet sich im externen Netz 10.0.3.0/24", src)
             return True
 
