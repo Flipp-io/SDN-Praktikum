@@ -103,7 +103,7 @@ Der Controller kann mit diesem Befehl gestartet werden:
 
 #### Mininet-Topologie
 Der Code für die Netzwerktopologie ist in der Datei "custom_topo.py" zu finden.  
-Diese Topologie enthält einen internen Client (h1), einen Server (h2) und einen externen Client (h3). Alle Hosts befinden sich im selben Subnetz (10.0.0.0/24). Auf h2 sollen ein Webserver und ein SSH-Server laufen.  
+Diese Topologie enthält einen internen Client (h1), einen Server (h2) und einen externen Client (h3). Alle Hosts befinden sich im selben Subnetz (10.0.0.0/24). Auf h2 sollen ein Webserver und ein SSH-Server laufen. Durch die Firewall soll der Server vor unberechtigtem Zugriff geschützt werden.  
 Die Topologie kann mit diesem Befehl gestartet werden:
 ```bash
 sudo mn --custom custom_topo.py --topo sdnfirewall --controller=remote,ip=127.0.0.1,port=6633 --mac -x
@@ -147,7 +147,7 @@ h1> curl 10.0.0.2
 h1> ssh 10.0.0.2
 ```
 
-- Schaut euch den Code des POX-Controllers an und versucht ihn nachzuvollziehen (bspw mit dem Editor "emacs" öffnen)
+- Schaut euch den Code des POX-Controllers an (Datei 'pox_firewall_acl.py') und versucht ihn nachzuvollziehen (bspw mit dem Editor "emacs" öffnen)
 - Überlegt euch sinnvolle Regeln, die die Sicherheit im Netzwerk erhöhen.
     - möglicher Regelsatz:
         - keinen Traffic vom externen Client zulassen bis auf Zugriff auf den HTTP-Server
@@ -169,7 +169,8 @@ h1> ssh 10.0.0.2
 
 ### Bonus falls noch Zeit: Erweiterung auf IP-Subnetze
 - Erweitert die Logik-Regeln, sodass sie auf ganze Subnetze angewendet werden und nicht nur auf einzelne Hosts. Dafür müssen ggf andere IP-Adressen an die Hosts vergeben werden (anzupassen in der Mininet-Topologie).
-- fügt (einen) weitere(n) Host(s) in der Topologie hinzu oder ändert die IP-Adressen der vorhandenen Hosts. Prüft, ob die Regeln weiterhin wie gewünscht angewendet werden
+- fügt (einen) weitere(n) Host(s) in der Topologie hinzu oder ändert die IP-Adressen der vorhandenen Hosts. Prüft, ob die Regeln weiterhin wie gewünscht funktionieren
+    - mögliche Lösung in pox_firewall_acl_subnets.py und custom_topo_subnets.py
 
 ### weiterer Bonus falls noch Zeit: Flows für zu blockierende Pakete
 Flows zum Droppen von Paketen im Switch installieren
