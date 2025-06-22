@@ -79,8 +79,8 @@ class SimpleFirewall (object):
         # externes Netz:    10.0.3.0/24
 
         # --- Regeln ---
-        # keinen Traffic vom externen Client zulassen bis auf Zugriff auf den HTTP-Server
-        # der interne Client darf alles, bis auf SSH zu h2
+        # * keinen Traffic vom externen Client zulassen, bis auf Zugriff auf den HTTP-Server
+        # * der interne Client darf alles, bis auf SSH zu h2
         
         # Regel 1: TCP-Pakete von allen Hosts an den HTTP-Server auf h2 erlauben
         if dst == IPAddr("10.0.2.2") and proto == ipv4.TCP_PROTOCOL and dport == 80:
