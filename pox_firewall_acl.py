@@ -96,11 +96,7 @@ class SimpleFirewall (object):
         # Beispiel: TCP Port 22 (SSH) von externem Client blockieren
         # if src == IPAddr("10.0.0.3") and proto == ipv4.TCP_PROTOCOL and dport == 22:
         #     return True
-        
-        # Beispiel: ICMP von externem Netz zu h2 blockieren
-        # externes_subnetz = IPNet("10.0.3.0/24")
-        # if src in externes_subnetz and dst == interner_host and proto == ipv4.ICMP_PROTOCOL:
-        #     return True
+
         return False
 
     def _allow_packet(self, event):
