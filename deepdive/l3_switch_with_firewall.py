@@ -27,6 +27,7 @@ import pox.openflow.libopenflow_01 as of
 from pox.lib.packet import ethernet, ipv4, tcp, udp, icmp, arp
 from pox.lib.addresses import EthAddr, IPAddr
 import time
+from pox.openflow.libopenflow_01 import ofp_action_dl_addr, OFPAT_SET_DL_SRC, OFPAT_SET_DL_DST
 
 log = core.getLogger()
 
@@ -209,7 +210,9 @@ class Layer3SwitchWithFirewall(object):
         requester_mac = arp_packet.protodst
         if requester_mac in self.mac_to_port:
             out_port = self.mac_to_port[requester_mac]
-            self._install_flow_and_forward(event.parsed, event.port, out_port, event)
+            self._install_flow_and_forward(event.parsed, event.port, out_port, event,
+                set_src_mac=self.gateway_ips[event.parsed.find('ipv4').dstip],
+                set_dst_mac=requester_mac)
             log.info("ARP: Reply weitergeleitet an %s über Port %s", requester_mac, out_port)
         else:
             log.warning("ARP: Reply für unbekannte MAC %s - Flood", requester_mac)
@@ -378,7 +381,9 @@ class Layer3SwitchWithFirewall(object):
             out_port = self._get_output_port(dst_mac, dst_ip)
             if out_port:
                 log.info("L3-Routing: %s → %s über Port %s", src_ip, dst_ip, out_port)
-                self._install_flow_and_forward(packet, in_port, out_port, event)
+                self._install_flow_and_forward(packet, in_port, out_port, event,
+                    set_src_mac=self.gateway_ips[dst_ip],
+                    set_dst_mac=dst_mac)
             else:
                 log.warning("L3-Routing: Kein Ausgangsport für %s gefunden", dst_ip)
                 self._flood_packet(event, in_port)
@@ -455,7 +460,7 @@ class Layer3SwitchWithFirewall(object):
         
         log.debug("ARP-Request gesendet für %s über Port %s", target_ip, out_port)
 
-    def _install_flow_and_forward(self, packet, in_port, out_port, event):
+    def _install_flow_and_forward(self, packet, in_port, out_port, event, set_src_mac=None, set_dst_mac=None):
         """
         Installiert Flow-Regel und leitet Paket weiter
         
@@ -464,13 +469,19 @@ class Layer3SwitchWithFirewall(object):
             in_port: Eingangsport
             out_port: Ausgangsport
             event: OpenFlow-Event
+            set_src_mac: Quell-MAC-Adresse für Source-MAC-Rewrite
+            set_dst_mac: Ziel-MAC-Adresse für Destination-MAC-Rewrite
         """
         msg = of.ofp_flow_mod()
         msg.match = of.ofp_match.from_packet(packet, in_port)
-        msg.idle_timeout = 30  # Flow-Regel wird nach Inaktivität gelöscht
-        msg.hard_timeout = 300  # max. Lebenszeit der Flow-Regel
+        msg.idle_timeout = 30
+        msg.hard_timeout = 300
+        if set_src_mac:
+            msg.actions.append(ofp_action_dl_addr(type=OFPAT_SET_DL_SRC, dl_addr=set_src_mac))
+        if set_dst_mac:
+            msg.actions.append(ofp_action_dl_addr(type=OFPAT_SET_DL_DST, dl_addr=set_dst_mac))
         msg.actions.append(of.ofp_action_output(port=out_port))
-        msg.data = event.ofp  # sendet auch gleich das aktuelle Paket
+        msg.data = event.ofp
         self.connection.send(msg)
         log.debug("Flow installiert: %s -> %s", in_port, out_port)
 
