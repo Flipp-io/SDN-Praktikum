@@ -268,6 +268,13 @@ class Layer3SwitchWithFirewall(object):
         # --- Sektion A: Firewall-Prüfung ---
         if self._is_packet_blocked(packet):
             log.info("Firewall: IP-Paket blockiert von %s nach %s", src_ip, dst_ip)
+            # Drop-Flow installieren
+            msg = of.ofp_flow_mod()
+            msg.match = of.ofp_match.from_packet(packet, in_port)
+            msg.idle_timeout = 30  # oder länger, je nach Bedarf
+            msg.hard_timeout = 300
+            # Keine Actions = Drop!
+            self.connection.send(msg)
             return
 
         # --- Sektion B: Routing-Entscheidung ---
@@ -381,9 +388,16 @@ class Layer3SwitchWithFirewall(object):
             out_port = self._get_output_port(dst_mac, dst_ip)
             if out_port:
                 log.info("L3-Routing: %s → %s über Port %s", src_ip, dst_ip, out_port)
-                self._install_flow_and_forward(packet, in_port, out_port, event,
-                    set_src_mac=self.gateway_ips[dst_ip],
-                    set_dst_mac=dst_mac)
+                src_gw_mac = self._get_gateway_mac_for_ip(src_ip)
+                dst_gw_mac = self._get_gateway_mac_for_ip(dst_ip)
+                if src_gw_mac and dst_gw_mac and src_gw_mac != dst_gw_mac:
+                    # Routing zwischen Subnetzen: setze Source-MAC auf Gateway-MAC des Ziel-Subnetzes
+                    self._install_flow_and_forward(packet, in_port, out_port, event,
+                        set_src_mac=dst_gw_mac,
+                        set_dst_mac=dst_mac)
+                else:
+                    # Innerhalb eines Subnetzes: kein Source-MAC-Rewrite
+                    self._install_flow_and_forward(packet, in_port, out_port, event)
             else:
                 log.warning("L3-Routing: Kein Ausgangsport für %s gefunden", dst_ip)
                 self._flood_packet(event, in_port)
@@ -498,6 +512,15 @@ class Layer3SwitchWithFirewall(object):
         msg.in_port = in_port
         self.connection.send(msg)
         log.debug("Paket geflutet von Port %s", in_port)
+
+    def _get_gateway_mac_for_ip(self, ip):
+        # Finde das passende Gateway für das Subnetz der Ziel-IP
+        for gw_ip in self.gateway_ips:
+            # Beispiel: 10.1.1.254 → 10.1.1.0/24
+            subnet = str(gw_ip).rsplit('.', 1)[0] + '.0/24'
+            if ip.inNetwork(subnet):
+                return self.gateway_ips[gw_ip]
+        return None
 
 def launch():
     """
