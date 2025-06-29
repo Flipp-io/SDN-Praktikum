@@ -214,7 +214,7 @@ Für fortgeschrittene Anwender und zusätzliche Experimente haben wir erweiterte
 - **Features:** 27 Hosts in 5 Subnetzen (Büros, DMZ, Server-Farm, Management)
 - **Verwendung:** `sudo mn --custom deepdive.enterprise_network_topo --topo enterprise --controller=remote,ip=127.0.0.1,port=6633 --mac -x`
 
-### 🔧 Hilfedateien
+### Hilfedateien
 - **`deepdive/firewall_help.py`:** Umfassende Firewall-Regel Beispiele
 - **`deepdive/enterprise_firewall_rules.py`:** Enterprise-spezifische Sicherheitsrichtlinien
 
