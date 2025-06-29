@@ -224,8 +224,8 @@ Siehe `deepdive/README.md` für detaillierte Anleitungen, Demo-Szenarien und Ver
 ### Demo-Szenarien
 ```bash
 # Enterprise-Topologie mit L3 Switch
-~/pox/pox.py deepdive.l3_switch_with_firewall samples.pretty_log --DEBUG
-sudo mn --custom deepdive.enterprise_network_topo --topo enterprise --controller=remote,ip=127.0.0.1,port=6633 --mac -x
+~/pox/pox.py l3_switch_with_firewall samples.pretty_log --DEBUG
+sudo mn --custom enterprise_network_topo --topo enterprise --controller=remote,ip=127.0.0.1,port=6633 --mac -x
 
 # Tests
 mininet> h15 ping h8      # Externer → Webserver (erlaubt)
