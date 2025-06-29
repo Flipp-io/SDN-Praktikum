@@ -192,7 +192,7 @@ Erweitert die Logik-Regeln, sodass sie auf ganze Subnetze angewendet werden und 
 
 2. Bisher werden nur für die erlaubten Pakete Flows in den Switches installiert. Was passiert mit den anderen Paketen? Was hat das für eine Auswirkung? Kann man als Angreifer dieses Verhalten ggf ausnutzen? Wie kann man das Problem lösen?
 
-3. Was ist der Unterschied zwischen einer SDN-basierten Firewall und einer traditionellen?
+3. Was ist der Unterschied zwischen einer SDN-basierten Firewall und einer traditionellen Firewall?
 
 4. Welche Vorteile bietet die Regelverwaltung via SDN-Controller gegenüber einer herkömmlichen Firewall?
 

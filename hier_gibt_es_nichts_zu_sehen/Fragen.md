@@ -5,7 +5,7 @@
 2. Bisher werden nur für die erlaubten Pakete Flows in den Switches installiert. Was passiert mit den anderen Paketen? Was hat das für eine Auswirkung? Kann man als Angreifer dieses Verhalten ggf ausnutzen? Wie kann man das Problem lösen?
     - Pakete werden vom Controller verworfen, neue Pakete desselben zu blockierenden Flows werden weiterhin an den Controller weitergeleitet. Dadurch kann der Controller überlastet werden. Schlauer wäre es, die Pakete bereits an den Switches zu verwerfen und dafür einen Flow im Switch zu installieren.
 
-3. Was ist der Unterschied zwischen einer SDN-basierten Firewall und einer traditionellen?
+3. Was ist der Unterschied zwischen einer SDN-basierten Firewall und einer traditionellen Firewall?
    - es gibt kein dediziertes Gerät an der Netzgrenze, sondern das ganze Netz mit allen Switches und Routern setzt die Firewall-Funktionalität um.
 
 4. Welche Vorteile bietet die Regelverwaltung via SDN-Controller gegenüber einer herkömmlichen Firewall?
