@@ -1,6 +1,18 @@
 # SDN-Praktikum: SDN mit Mininet und POX
 
 ## Vorbereitung
+Falls die Zwischenablage nicht funktionieren sollte:  
+- Im VM-Fenster unter Geräte -> Gemeinsame Zwischenablage -> bidirektional 
+
+Ggf. folgendes nachinstallieren:
+```bash
+sudo apt install virtualbox-guest-x11
+```
+Dann die geteilte Zwischenablage starten:
+```bash
+sudo VBoxClient --clipboard
+```
+
 Ihr könnt dieses Repo in das Home-Verzeichnis der Mininet-VM clonen, um die Dateien nicht händisch kopieren zu müssen:
 ```bash
 cd ~
@@ -11,14 +23,6 @@ Den Befehl zum Starten der Topologie führt ihr dann aus dem geclonten Ordner he
 Curl nachinstallieren:
 ```bash
 sudo apt install curl
-```
-Falls die Zwischenablage nicht funktionieren sollte: guest extensions nachinstallieren:
-```bash
-sudo apt install virtualbox-guest-x11
-```
-Dann die geteilte Zwischenablage starten:
-```bash
-sudo VBoxClient --clipboard
 ```
 
 
@@ -85,7 +89,7 @@ Wie soll der Switch laut Tabelle mit den Paketen der Flows umgehen?
 
 
 ## Aufgabe B. SDN-Firewall mit statischer ACL
-In diesem Versuch sollt ihr eine einfache Firewall mit statischen Regeln implementieren, die eingehenden und ausgehenden Verkehr basierend auf IP-Adressen, Protokollen und Ports blockiert oder erlaubt. Die Filter-Regeln sollt ihr selbst festlegen und im Code umsetzen.
+In diesem Versuch sollt ihr eine einfache Firewall mit statischen Regeln implementieren, die den Verkehr basierend auf IP-Adressen, Protokollen und Ports blockiert oder erlaubt. Die Filter-Regeln sollt ihr selbst festlegen und im Code umsetzen.
 
 
 ### Vorbereitung
@@ -156,7 +160,7 @@ Wenn jeder Host von allen anderen Erreicht werden konnte, ist das Netzwerk korre
 #### Aufgaben
 - Schaut euch den Code des POX-Controllers an (Datei 'pox_firewall_acl.py') und versucht ihn nachzuvollziehen (bspw mit dem Editor "emacs" öffnen)
 - Welche Informationen eines eintreffenden Pakets werden extrahiert?
-- Überlegt euch sinnvolle Regeln, die die Sicherheit im Netzwerk erhöhen und bspw. den Zugriff auf die Server-Dienste steuern. Die Regeln können zunächst mit Worten formuliert werden.
+- Überlegt euch sinnvolle Regeln, die die Sicherheit im Netzwerk erhöhen und bspw. den Zugriff auf die Server-Dienste steuern (ein bis zwei Regeln reichen zunäcsht aus). Die Regeln können zunächst mit Worten formuliert werden.
     - Regelsatz der Musterlösung:
         - keinen Traffic vom externen Client zulassen bis auf Zugriff auf den HTTP-Server
         - der interne Client darf alles, bis auf SSH zu h2
@@ -165,7 +169,15 @@ Wenn jeder Host von allen anderen Erreicht werden konnte, ist das Netzwerk korre
         - aber HTTP von h3 zu h2 erlauben
         - ICMP und HTTP von h1 zu h2 erlauben
 - Implementiert die Regeln im Code (in der 'is_blocked'-Methode)
-- Überprüft, ob die Regeln wirksam sind, indem ihr die Erreichbarkeit der Hosts und Server-Dienste prüft.
+- Überprüft, ob die Regeln wirksam sind, indem ihr die Erreichbarkeit der Hosts und Server-Dienste prüft und die Flowtabelle anschaut.
+
+
+### Bonus falls noch Zeit: Erweiterung auf IP-Subnetze
+Erweitert die Logik-Regeln, sodass sie auf ganze Subnetze angewendet werden und nicht nur auf einzelne Hosts. Dafür müssen andere IP-Adressen an die Hosts vergeben werden (anzupassen in der Mininet-Topologie).
+- Setzt die Hosts in unterschiedliche "/24"-er Subnetze (zB. 10.0.1.0/24, 10.0.2.0/24, 10.0.3.0/24, ...). Für diese Subnetze legt ihr anschließend die Firewall-Regeln fest. Damit die Hosts sich grundsätzlich ohne Routing erreichen können, setzt ihre Netzmaske in der Topologie auf "/16" (zB. 10.0.1.1/16, 10.0.2.2/16, ...). Dadurch befinden sie sich in einem größeren Subnetz, die Regeln werden jedoch auf die kleineren Subnetze angewendet.
+- Passt die Filter-Regeln im Code an, sodass sie auf die neu erstellten Netze angewendet werden.
+- Fügt (einen) weitere(n) Host(s) in den verschiedenen Subnetzen hinzu oder ändert die IP-Adressen der vorhandenen Hosts. Prüft, ob die Regeln weiterhin wie gewünscht funktionieren.
+    - mögliche Lösung in pox_firewall_acl_subnets.py und custom_topo_subnets.py
 
 
 
@@ -174,22 +186,6 @@ Wenn jeder Host von allen anderen Erreicht werden konnte, ist das Netzwerk korre
    - Antwort: Alle erlaubten Pakete werden geflutet statt an einen gezielten Port weitergeleitet.
 2. Bisher werden nur für die erlaubten Pakete Flows in den Switches installiert. Was passiert mit den anderen Paketen? Was hat das für eine Auswirkung? Kann man als Angreifer dieses Verhalten ggf ausnutzen? Wie kann man das Problem lösen?
     - Pakete werden vom Controller verworfen, neue Pakete desselben zu blockierenden Flows werden weiterhin an den Controller weitergeleitet. Dadurch kann der Controller überlastet werden. Schlauer wäre es, die Pakete bereits an den Switches zu verwerfen und dafür einen Flow im Switch zu installieren.
-
-
-### Bonus falls noch Zeit: Erweiterung auf IP-Subnetze
-Erweitert die Logik-Regeln, sodass sie auf ganze Subnetze angewendet werden und nicht nur auf einzelne Hosts. Dafür müssen andere IP-Adressen an die Hosts vergeben werden (anzupassen in der Mininet-Topologie).
-- Setzt die Hosts in unterschiedliche "/24"-er Subnetze (zB. 10.0.1.0/24, 10.0.2.0/24, 10.0.3.0/24, ...). Für diese Subnetze legt ihr anschließend die Firewall-Regeln fest. Damit die Hosts sich grundsätzlich ohne Routing erreichen können, setzt ihre Netzmaske auf "/16" (zB. 10.0.1.1/16, 10.0.2.2/16, ...). Dadurch befinden sie sich in einem größeren Subnetz, die Regeln werden jedoch auf die kleineren Subnetze angewendet.
-- Passt die Filter-Regeln im Code an, sodass sie auf die neu erstellten Netze angewendet werden.
-- Fügt (einen) weitere(n) Host(s) in den verschiedenen Subnetzen hinzu oder ändert die IP-Adressen der vorhandenen Hosts. Prüft, ob die Regeln weiterhin wie gewünscht funktionieren.
-    - mögliche Lösung in pox_firewall_acl_subnets.py und custom_topo_subnets.py
-
-
-
-### weiterer Bonus falls noch Zeit: Flows für zu blockierende Pakete
-Flows zum Droppen von Paketen im Switch installieren
-
-### weiterer weiterer Bonus falls noch Zeit: Firewall inkl. Lernswitch
-Lernswitch-Funktionalität ergänzen (sehr fortgeschritten)
 
 
 
