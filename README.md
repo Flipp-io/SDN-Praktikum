@@ -1,14 +1,21 @@
-# SDN-Praktikum: SDN mit Mininet und POX
+# KN-Praktikum: SDN mit Mininet und POX
 
 ## Vorbereitung
-Falls die Zwischenablage nicht funktionieren sollte:  
+
+Username und Passwort für die VM:  
+- mininet / mininet  
+
+Copy/Paste in der VM:
+- STRG+SHIFT+C / STRG+SHIFT+V
+
+Geteilte Zwischenablage anschalten:  
 - Im VM-Fenster unter Geräte -> Gemeinsame Zwischenablage -> bidirektional 
 
-Ggf. folgendes nachinstallieren:
+Falls die geteilte Zwischenablage immer noch nicht funktioniert, folgendes nachinstallieren:
 ```bash
 sudo apt install virtualbox-guest-x11
 ```
-Dann die geteilte Zwischenablage starten:
+Und dann die geteilte Zwischenablage starten:
 ```bash
 sudo VBoxClient --clipboard
 ```
@@ -20,7 +27,7 @@ git clone https://github.com/Flipp-io/SDN-Praktikum.git
 ```
 Den Befehl zum Starten der Topologie führt ihr dann aus dem geclonten Ordner heraus aus. (also ~/SDN-Praktikum)
 
-Curl nachinstallieren:
+Curl installieren:
 ```bash
 sudo apt install curl
 ```
@@ -76,13 +83,12 @@ Können sich die Hosts gegenseitig erreichen? Achtet auch auf die Ausgabe des Co
 ```bash
 mininet> dpctl dump-flows --color=always
 ```
-Findet ihr die MAC- und IP-Adressen der Hosts wieder? 
+Findet ihr die MAC- und IP-Adressen der Hosts wieder?  
 Wie soll der Switch laut Tabelle mit den Paketen der Flows umgehen?
 
 
 
 
----
 ---
 
 
@@ -172,7 +178,7 @@ Wenn jeder Host von allen anderen Erreicht werden konnte, ist das Netzwerk korre
 - Überprüft, ob die Regeln wirksam sind, indem ihr die Erreichbarkeit der Hosts und Server-Dienste prüft und die Flowtabelle anschaut.
 
 
-### Bonus falls noch Zeit: Erweiterung auf IP-Subnetze
+### Bonusaufgabe falls noch Zeit: Erweiterung auf IP-Subnetze
 Erweitert die Logik-Regeln, sodass sie auf ganze Subnetze angewendet werden und nicht nur auf einzelne Hosts. Dafür müssen andere IP-Adressen an die Hosts vergeben werden (anzupassen in der Mininet-Topologie).
 - Setzt die Hosts in unterschiedliche "/24"-er Subnetze (zB. 10.0.1.0/24, 10.0.2.0/24, 10.0.3.0/24, ...). Für diese Subnetze legt ihr anschließend die Firewall-Regeln fest. Damit die Hosts sich grundsätzlich ohne Routing erreichen können, setzt ihre Netzmaske in der Topologie auf "/16" (zB. 10.0.1.1/16, 10.0.2.2/16, ...). Dadurch befinden sie sich in einem größeren Subnetz, die Regeln werden jedoch auf die kleineren Subnetze angewendet.
 - Passt die Filter-Regeln im Code an, sodass sie auf die neu erstellten Netze angewendet werden.
@@ -181,20 +187,19 @@ Erweitert die Logik-Regeln, sodass sie auf ganze Subnetze angewendet werden und 
 
 
 
-### Fragen zum Versuch
+### Fragen 
 1. Was fällt euch auf, wenn ihr euch die Flowtable ausgeben lasst? Was passiert mit den Paketen? (Befehl in Mininet: "dpctl dump-flows --color=always")
    - Antwort: Alle erlaubten Pakete werden geflutet statt an einen gezielten Port weitergeleitet.
+
 2. Bisher werden nur für die erlaubten Pakete Flows in den Switches installiert. Was passiert mit den anderen Paketen? Was hat das für eine Auswirkung? Kann man als Angreifer dieses Verhalten ggf ausnutzen? Wie kann man das Problem lösen?
     - Pakete werden vom Controller verworfen, neue Pakete desselben zu blockierenden Flows werden weiterhin an den Controller weitergeleitet. Dadurch kann der Controller überlastet werden. Schlauer wäre es, die Pakete bereits an den Switches zu verwerfen und dafür einen Flow im Switch zu installieren.
 
-
-
-### Fragen Allgemein SDN
-1. Was sind typische Merkmale einer SDN-basierten Firewall im Vergleich zu einer traditionellen?
+3. Was sind typische Merkmale einer SDN-basierten Firewall im Vergleich zu einer traditionellen?
    - es gibt kein dediziertes Gerät an der Netzgrenze, sondern das ganze Netz mit allen Switches und Routern setzt die Firewall-Funktionalität um.
-3. Welche Vorteile bietet eine zentrale Regelverwaltung via Controller?
+
+4. Welche Vorteile bietet eine zentrale Regelverwaltung via Controller?
    - die Regeln können zentral festgelegt werden.
-   - ein Angreifer, welcher vom Inneren des Netzes aus agiert, wird von einer herkömmlichen Firewall ggf nicht erkannt bzw sie ist machtlos dagegen. Bei einer SDN-Firewall können nach Erkennen des Angriffs von innen trotzdem Maßnahmen ergriffen werden.
+   - ein Angreifer, welcher vom Inneren des Netzes aus agiert, wird von einer herkömmlichen Firewall ggf nicht erkannt bzw sie ist machtlos dagegen. Bei einer SDN-Firewall können nach Erkennen des Angriffs trotzdem Maßnahmen ergriffen werden (wie ein IDS/IPS)
 
 ---
 
