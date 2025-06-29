@@ -81,6 +81,31 @@ class SimpleFirewall (object):
 
 
 
+        # --- Beispielhafter Regelsatz ---
+        # keinen Traffic vom externen Client zulassen bis auf Zugriff auf den HTTP-Server
+        # der interne Client darf alles, bis auf SSH zu h2
+        
+        # Regel 1: TCP-Pakete von allen Hosts an den HTTP-Server auf h2 erlauben
+        if dst == IPAddr("10.0.0.2") and proto == ipv4.TCP_PROTOCOL and dport == 80:
+            return False
+
+        # Regel 2: gesamten Traffic von h3 blockieren
+        if src == IPAddr("10.0.0.3"):
+            return True
+
+        # Regel 3: SSH von h1 zu h2 blockieren
+        if src == IPAddr("10.0.0.1") and dst == IPAddr("10.0.0.2") and proto == ipv4.TCP_PROTOCOL and dport == 22:
+            return True
+        
+        # --- Einzelbeispiele für Regeln ---
+        # Beispiel: ICMP von externem Client blockieren
+        # if src == IPAddr("10.0.0.3") and proto == ipv4.ICMP_PROTOCOL:
+        #     return True
+        
+        # Beispiel: TCP Port 22 (SSH) von externem Client blockieren
+        # if src == IPAddr("10.0.0.3") and proto == ipv4.TCP_PROTOCOL and dport == 22:
+        #     return True
+
         return False
 
     def _allow_packet(self, event):
