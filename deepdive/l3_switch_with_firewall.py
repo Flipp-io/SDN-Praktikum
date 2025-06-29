@@ -30,6 +30,15 @@ import time
 
 log = core.getLogger()
 
+gateway_ips = {
+    IPAddr("10.1.1.254"): EthAddr("00:aa:00:00:01:01"),
+    IPAddr("10.2.1.254"): EthAddr("00:aa:00:00:02:01"),
+    IPAddr("10.3.1.254"): EthAddr("00:aa:00:00:03:01"),
+    IPAddr("10.4.1.254"): EthAddr("00:aa:00:00:04:01"),
+    IPAddr("10.5.1.254"): EthAddr("00:aa:00:00:05:01"),
+    # ... ggf. weitere Subnetze
+}
+
 class Layer3SwitchWithFirewall(object):
     """
     Vollständiger Layer 3 Switch mit Firewall-Funktionalität
@@ -55,6 +64,7 @@ class Layer3SwitchWithFirewall(object):
         self.mac_to_ip = {}    # MAC-Adresse → IP-Adresse (Reverse-ARP)
         self.arp_requests = {} # Ausstehende ARP-Requests
         self.static_routes = {} # Statische Routen: Netzwerk → Gateway
+        self.gateway_ips = gateway_ips # Gateway-IPs
         
         # Statische Routen konfigurieren
         self._setup_static_routes()
@@ -170,6 +180,13 @@ class Layer3SwitchWithFirewall(object):
         """
         target_ip = arp_packet.protodst
         
+        # Prüfe, ob die Ziel-IP eine Gateway-IP ist
+        if target_ip in self.gateway_ips:
+            gw_mac = self.gateway_ips[target_ip]
+            self._send_arp_reply(target_ip, gw_mac, arp_packet.protosrc, src_mac, in_port)
+            log.info("ARP: Gateway-Reply für %s → %s", target_ip, gw_mac)
+            return
+
         if target_ip in self.ip_to_mac:
             # Ziel-IP bekannt → ARP-Reply senden
             target_mac = self.ip_to_mac[target_ip]
