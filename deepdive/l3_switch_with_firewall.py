@@ -268,6 +268,13 @@ class Layer3SwitchWithFirewall(object):
         # --- Sektion A: Firewall-Prüfung ---
         if self._is_packet_blocked(packet):
             log.info("Firewall: IP-Paket blockiert von %s nach %s", src_ip, dst_ip)
+            # Drop-Flow installieren
+            msg = of.ofp_flow_mod()
+            msg.match = of.ofp_match.from_packet(packet, in_port)
+            msg.idle_timeout = 30  # oder länger, je nach Bedarf
+            msg.hard_timeout = 300
+            # Keine Actions = Drop!
+            self.connection.send(msg)
             return
 
         # --- Sektion B: Routing-Entscheidung ---
