@@ -1,16 +1,73 @@
 """
-Firewall ACL - Hilfe und Beispiele
+Firewall/ACL-Hilfe für SDN-Projekte (Mininet + POX)
+===================================================
 
-Diese Datei enthält praktische Beispiele für Firewall-Regeln,
-die du in der _is_blocked_by_acl() Methode verwenden kannst.
+Hier findest du Beispiele, Tipps und typische Stolperfallen für die zentrale Firewall-Logik im SDN-Controller.
 
-Verwendung:
-1. Kopiere die gewünschten Regeln in l2_learningSwitch.py
-2. Passe die IP-Adressen und Ports an deine Topologie an
-3. Teste die Regeln mit Mininet
+---
 
-Hinweis: Regeln werden von oben nach unten abgearbeitet.
-Die erste passende Regel wird angewendet!
+## Grundprinzip
+- Die Firewall-Regeln werden zentral im Controller (z.B. in `_is_blocked_by_acl`) definiert.
+- Jede Regel kann auf Quell-/Ziel-IP, Protokoll, Port, Subnetz etc. prüfen.
+- Die Reihenfolge der Regeln ist wichtig: Die erste passende Regel entscheidet!
+
+---
+
+## Beispiele für ACL-Regeln
+
+### 1. HTTP (Port 80) zu DMZ-Server erlauben
+```python
+if dst == IPAddr("10.2.1.100") and proto == ipv4.TCP_PROTOCOL and dport == 80:
+    # HTTP zu DMZ-Server ist erlaubt
+    return False
+```
+
+### 2. Gesamten Traffic aus externem Netz blockieren
+```python
+if src.inNetwork("10.3.1.0/24"):
+    # Alles aus externem Netz wird geblockt
+    return True
+```
+
+### 3. SSH von intern zu DMZ blockieren
+```python
+if src.inNetwork("10.1.1.0/24") and dst.inNetwork("10.2.1.0/24") and proto == ipv4.TCP_PROTOCOL and dport == 22:
+    # SSH von intern zu DMZ ist geblockt
+    return True
+```
+
+### 4. ICMP (Ping) zwischen Subnetzen blockieren
+```python
+if proto == ipv4.ICMP_PROTOCOL:
+    if not src.inNetwork("10.1.1.0/24") == dst.inNetwork("10.1.1.0/24"):
+        # Ping zwischen Subnetzen blockieren
+        return True
+```
+
+### 5. Standard: Alles erlauben
+```python
+# Am Ende: alles erlauben
+return False
+```
+
+---
+
+## Tipps & Stolperfallen
+- **Subnetz-Masken:** Achte darauf, dass die Subnetze in den Regeln zu den Host-IPs passen!
+- **Reihenfolge:** Die erste passende Regel zählt. Schreibe spezifische Regeln zuerst, allgemeine zuletzt.
+- **Protokoll-IDs:**
+  - ICMP: `ipv4.ICMP_PROTOCOL`
+  - TCP: `ipv4.TCP_PROTOCOL`
+  - UDP: `ipv4.UDP_PROTOCOL`
+- **Debugging:** Nutze das Log (`log.debug(...)`) für gezielte Ausgaben.
+- **Drop-Flow:** Bei Blockade wird ein Drop-Flow installiert – der Switch blockiert dann direkt.
+
+---
+
+## Eigene Szenarien
+- Erweitere die Regeln z.B. um Zeitsteuerung, bestimmte Hosts, Ports, ...
+- Teste verschiedene Kombinationen (HTTP, SSH, Ping, Subnetze, ...).
+
 """
 
 from pox.lib.addresses import IPAddr

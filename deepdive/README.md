@@ -1,148 +1,62 @@
-# SDN Deepdive - Erweiterte Implementierungen
+# SDN Deepdive: L3-Switch mit Firewall
 
-Dieser Ordner enthält erweiterte SDN-Implementierungen mit Firewall-Funktionalität und Enterprise-Netzwerk-Topologien.
+Dieses Verzeichnis enthält fortgeschrittene SDN-Beispiele für Mininet und POX, insbesondere einen Layer-3-Switch mit integrierter Firewall und eine realistische Enterprise-Topologie.
+
+## Features
+- **L3-Switch mit Firewall:** Routing zwischen Subnetzen, ARP-Handling, zentrale ACL/Firewall-Logik, Flow-Installation
+- **Enterprise-Topologie:** Mehrere Subnetze (intern, DMZ, extern, Server, Management) mit jeweils eigenem Switch und zentralem Router-Switch
+- **Zentrale, dynamische Steuerung:** SDN-typische Policy-Änderungen im laufenden Betrieb
 
 ## Dateien
+- `l3_switch_with_firewall.py`: POX-Controller mit L3-Routing und Firewall-Logik
+- `enterprise_network_topo.py`: Mininet-Topologie mit mehreren Subnetzen und zentralem Router
+- `firewall_help.py`: Beispiele und Hilfestellungen für Firewall/ACL-Regeln
 
-### Controller-Implementierungen
+## Nutzung
+1. **Mininet-Topologie starten:**
+   ```sh
+   sudo mn --custom deepdive/enterprise_network_topo.py --topo enterprise --controller=remote,ip=127.0.0.1,port=6633 --mac -x
+   ```
+2. **POX-Controller starten:**
+   ```sh
+   ~/pox/pox.py l3_switch_with_firewall samples.pretty_log --DEBUG
+   ```
+3. **Hosts konfigurieren:**
+   - Die Default-Gateways sind in der Topologie bereits gesetzt.
+   - Prüfe mit `h1 route -n` etc.
 
-#### `l2_switch_with_firewall.py`
-**L2 Learning Switch mit integrierter Firewall**
+4. **Tests:**
+   - `h1 ping h2` (innerhalb Subnetz)
+   - `h1 ping h8` (zwischen Subnetzen)
+   - `h1 curl 10.2.1.100` (HTTP zu DMZ)
+   - `h15 ping 10.1.1.10` (aus externem Netz, sollte geblockt werden)
+   - `h1 ssh 10.2.1.100` (SSH zu DMZ, sollte geblockt werden)
 
-- **Funktionen:**
-  - MAC-Adress-Learning für effizientes Layer-2-Switching
-  - Firewall-Filterung basierend auf IP-Adressen, Protokollen und Ports
-  - Flow-Installation für erlaubte Pakete zur Performance-Optimierung
+## Beispiel: Firewall-Regeln
+Die ACL-Regeln werden zentral im Controller gesetzt (siehe `_is_blocked_by_acl`).
 
-- **Verwendung:**
-  ```bash
-  ~/pox/pox.py deepdive.l2_switch_with_firewall samples.pretty_log --DEBUG
-  ```
-
-- **Topologie:**
-  ```bash
-  sudo mn --custom custom_topo.py --topo sdnfirewall --controller=remote,ip=127.0.0.1,port=6633 --mac -x
-  ```
-
-#### `l3_switch_with_firewall.py`
-**Layer 3 Switch mit integrierter Firewall**
-
-- **Funktionen:**
-  - IP-basiertes Routing zwischen Subnetzen
-  - ARP-Handling für MAC-Adress-Auflösung
-  - Firewall-Filterung basierend auf ACL-Regeln
-  - Flow-Installation für Performance-Optimierung
-  - MAC-Adress-Learning für lokale Subnetze
-
-- **Verwendung:**
-  ```bash
-  ~/pox/pox.py deepdive.l3_switch_with_firewall samples.pretty_log --DEBUG
-  ```
-
-- **Topologie:**
-  ```bash
-  sudo mn --custom deepdive.enterprise_network_topo --topo enterprise --controller=remote,ip=127.0.0.1,port=6633 --mac -x
-  ```
-
-### Topologien
-
-#### `enterprise_network_topo.py`
-**Enterprise-Netzwerk Topologie**
-
-Simuliert ein realistisches Unternehmensnetzwerk mit:
-
-- **10.1.0.0/16** - Internes Netzwerk (Büros, Entwickler, IT-Admins)
-- **10.2.0.0/16** - DMZ (öffentliche Server)
-- **10.3.0.0/16** - Externes Netzwerk (Internet)
-- **10.4.0.0/16** - Server-Farm (Datenbanken, Anwendungen)
-- **10.5.0.0/16** - Management-Netzwerk (Admin-Zugang)
-
-**27 Hosts in 5 verschiedenen Subnetzen:**
-- Büro-Clients (h1-h3)
-- Entwickler (h4-h5)
-- IT-Admins (h6-h7)
-- Webserver (h8-h9)
-- Mailserver (h10-h11)
-- DNS-Server (h12-h13)
-- FTP-Server (h14)
-- Externe Clients (h15-h17)
-- VPN-Gateway (h18)
-- Datenbank-Server (h19-h20)
-- Anwendungs-Server (h21-h22)
-- File-Server (h23-h24)
-- Monitoring-Server (h25-h26)
-- Backup-Server (h27)
-
-### Hilfedateien
-
-#### `firewall_help.py`
-**Firewall ACL - Hilfe und Beispiele**
-
-Enthält praktische Beispiele für Firewall-Regeln:
-- Grundlegende Blockierungs-Regeln
-- Erweiterte Blockierungs-Regeln
-- Subnetz-basierte Regeln
-- Praktische Szenarien
-- Debugging und Logging
-- Häufige Fehler und Lösungen
-
-#### `enterprise_firewall_rules.py`
-**Enterprise Firewall Rules**
-
-Erweiterte Firewall-Regeln für die Enterprise-Topologie mit:
-- Grundlegende Sicherheitsregeln
-- DMZ-Zugriffsregeln
-- Server-Farm Zugriffsregeln
-- Management-Netzwerk Regeln
-- Spezifische Server-Regeln
-- Datenbank-Zugriffsregeln
-- Monitoring-Zugriffsregeln
-- VPN-Zugriffsregeln
-- ICMP-Regeln
-
-## Demo-Szenarien
-
-### L2 Switch mit Firewall
-```bash
-# Controller starten
-~/pox/pox.py deepdive.l2_switch_with_firewall samples.pretty_log --DEBUG
-
-# Topologie starten
-sudo mn --custom custom_topo.py --topo sdnfirewall --controller=remote,ip=127.0.0.1,port=6633 --mac -x
-
-# Tests
-mininet> h1 ping h2
-mininet> h3 ping h2
-mininet> h1 curl 10.0.0.2
-mininet> h3 curl 10.0.0.2
+```python
+# HTTP zu DMZ erlauben
+if dst == IPAddr("10.2.1.100") and proto == ipv4.TCP_PROTOCOL and dport == 80:
+    return False
+# Traffic aus externem Netz blockieren
+if src.inNetwork("10.3.1.0/24"):
+    return True
+# SSH von intern zu DMZ blockieren
+if src.inNetwork("10.1.1.0/24") and dst.inNetwork("10.2.1.0/24") and proto == ipv4.TCP_PROTOCOL and dport == 22:
+    return True
 ```
 
-### L3 Switch mit Firewall
-```bash
-# Controller starten
-~/pox/pox.py deepdive.l3_switch_with_firewall samples.pretty_log --DEBUG
+## Vorteile von SDN (für die Demo)
+- **Zentrale Steuerung:** Eine Codezeile im Controller ändert das Verhalten des gesamten Netzes.
+- **Dynamik:** Regeln können im laufenden Betrieb angepasst werden.
+- **Effizienz:** Geblockte Flows werden direkt auf Switch-Ebene installiert (Drop-Flow).
 
-# Enterprise-Topologie starten
-sudo mn --custom deepdive.enterprise_network_topo --topo enterprise --controller=remote,ip=127.0.0.1,port=6633 --mac -x
-
-# Demo-Szenarien
-mininet> h15 ping h8      # Externer → Webserver (erlaubt)
-mininet> h15 ping h19     # Externer → MySQL (blockiert)
-mininet> h1 ping h8       # Büro-Client → Webserver (erlaubt)
-mininet> h1 ping h19      # Büro-Client → MySQL (blockiert)
-mininet> h4 ping h21      # Entwickler → App-Server (erlaubt)
-mininet> h6 ping h25      # IT-Admin → Monitoring (erlaubt)
-```
-
-## Flow-Table Analyse
-
-```bash
-# Flow-Table anzeigen
-mininet> dpctl dump-flows --color=always
-
-# Controller-Logs beobachten
-# Schau in das POX-Terminal für Firewall-Logs
-```
+## Hinweise für Studierende
+- Ihr könnt beliebige ACL-Regeln ergänzen oder ändern.
+- Nutzt das Log für Debugging (`--DEBUG`).
+- Probiert verschiedene Szenarien (HTTP, SSH, Ping, Subnetze, ...).
+- Die Topologie und der Controller sind modular und können leicht erweitert werden.
 
 ## Vergleich L2 vs L3 Switch
 
