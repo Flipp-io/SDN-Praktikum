@@ -199,3 +199,48 @@ Lernswitch-Funktionalität ergänzen (sehr fortgeschritten)
 3. Welche Vorteile bietet eine zentrale Regelverwaltung via Controller?
    - die Regeln können zentral festgelegt werden.
    - ein Angreifer, welcher vom Inneren des Netzes aus agiert, wird von einer herkömmlichen Firewall ggf nicht erkannt bzw sie ist machtlos dagegen. Bei einer SDN-Firewall können nach Erkennen des Angriffs von innen trotzdem Maßnahmen ergriffen werden.
+
+---
+
+## Deepdive: Erweiterte SDN-Implementierungen
+
+Für fortgeschrittene Anwender und zusätzliche Experimente haben wir erweiterte SDN-Implementierungen im `deepdive/` Ordner erstellt.
+
+### Verfügbare Erweiterungen
+
+#### L2 Learning Switch mit Firewall
+- **Datei:** `deepdive/l2_switch_with_firewall.py`
+- **Features:** MAC-Learning + IP-basierte Firewall
+- **Verwendung:** `~/pox/pox.py deepdive.l2_switch_with_firewall samples.pretty_log --DEBUG`
+
+#### Layer 3 Switch mit Firewall  
+- **Datei:** `deepdive/l3_switch_with_firewall.py`
+- **Features:** IP-Routing + ARP-Handling + Subnetz-basierte Firewall
+- **Verwendung:** `~/pox/pox.py deepdive.l3_switch_with_firewall samples.pretty_log --DEBUG`
+
+#### Enterprise-Netzwerk Topologie
+- **Datei:** `deepdive/enterprise_network_topo.py`
+- **Features:** 27 Hosts in 5 Subnetzen (Büros, DMZ, Server-Farm, Management)
+- **Verwendung:** `sudo mn --custom deepdive.enterprise_network_topo --topo enterprise --controller=remote,ip=127.0.0.1,port=6633 --mac -x`
+
+### Hilfedateien
+- **`deepdive/firewall_help.py`:** Umfassende Firewall-Regel Beispiele
+- **`deepdive/enterprise_firewall_rules.py`:** Enterprise-spezifische Sicherheitsrichtlinien
+
+### Dokumentation
+Siehe `deepdive/README.md` für detaillierte Anleitungen, Demo-Szenarien und Vergleichstabellen.
+
+### Demo-Szenarien
+```bash
+# Enterprise-Topologie mit L3 Switch
+~/pox/pox.py l3_switch_with_firewall samples.pretty_log --DEBUG
+sudo mn --custom enterprise_network_topo --topo enterprise --controller=remote,ip=127.0.0.1,port=6633 --mac -x
+
+# Tests
+mininet> h15 ping h8      # Externer → Webserver (erlaubt)
+mininet> h15 ping h19     # Externer → MySQL (blockiert)
+mininet> h1 ping h8       # Büro-Client → Webserver (erlaubt)
+mininet> h6 ping h25      # IT-Admin → Monitoring (erlaubt)
+```
+
+Diese Erweiterungen demonstrieren die vollen möglichkeiten von SDN mit realistischen Enterprise-Szenarien und erweiterten Sicherheitsfunktionen.
