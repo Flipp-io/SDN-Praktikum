@@ -1,3 +1,7 @@
+# Mininet-Topologie fuer Aufagbe B: SDN-Firewall mit statischer ACL
+# Clients im selben /24 Subnetz
+#
+
 from mininet.topo import Topo
 
 class SDNFirewallTopo(Topo):

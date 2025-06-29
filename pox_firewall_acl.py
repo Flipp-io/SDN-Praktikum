@@ -75,7 +75,9 @@ class SimpleFirewall (object):
         print("Adresse liegt im Subnetz")
     """
     def is_blocked(self, src, dst, proto, dport):
-        # hier Regeln definieren
+        # hier Regeln definieren nach folgendem Muster:
+        # if <Bedingung> and <weitere Bedingung>:
+        #     return True  # True: Paket blockieren, False: Paket erlauben
 
 
 
