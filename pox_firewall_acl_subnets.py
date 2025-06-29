@@ -24,7 +24,7 @@ class SimpleFirewall (object):
             self._allow_packet(event)
             return
 
-        # --- Sektion A: relevante Felder extrahieren ---
+        # --- relevante Felder extrahieren ---
         # hier werden Quell-/Ziel-IP, Protokoll, Ports aus dem IP-Paket extrahiert
         src_ip = ip_packet.srcip
         dst_ip = ip_packet.dstip
@@ -34,7 +34,7 @@ class SimpleFirewall (object):
         dst_port = None
 
         if proto == ipv4.ICMP_PROTOCOL:
-            pass  # ICMP → keine Ports
+            pass  # ICMP -> keine Ports
         elif proto == ipv4.TCP_PROTOCOL:
             tcp_packet = packet.find('tcp')
             if tcp_packet:
@@ -46,7 +46,7 @@ class SimpleFirewall (object):
                 src_port = udp_packet.srcport
                 dst_port = udp_packet.dstport
 
-        # --- Sektion B: Entscheidung gemäß ACL ---
+        # --- Entscheidung gemäß ACL ---
         if self.is_blocked(src_ip, dst_ip, proto, dst_port):
             log.info("Blockiert: %s -> %s (proto %s, port %s)", src_ip, dst_ip, proto, dst_port)
             return  # Paket wird nicht weitergeleitet
@@ -54,7 +54,7 @@ class SimpleFirewall (object):
             log.info("Erlaubt: %s -> %s (proto %s, port %s)", src_ip, dst_ip, proto, dst_port)
             self._allow_packet(event)
 
-    # --- Sektion C: Statische ACL ---
+    # --- Statische ACL ---
     # TODO: in der Methode "is_blocked" sollt ihr Regeln festlegen
     """
     # --- Hilfe ---
@@ -68,7 +68,7 @@ class SimpleFirewall (object):
     ip == IPAddr("192.168.0.1")
 
     # Syntax um zu prüfen, ob eine IP-Adresse in einem gegebenen Subnetz liegt:
-    if src.inNetwork("192.168.1.0/24"):
+    if ip.inNetwork("192.168.1.0/24"):
         print("Adresse liegt im Subnetz")
     """
     def is_blocked(self, src, dst, proto, dport):
