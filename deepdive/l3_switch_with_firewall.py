@@ -351,17 +351,17 @@ class Layer3SwitchWithFirewall(object):
         # --------------------- Hier die Regeln einfügen ---------------------
         
         # Regel 1: HTTP-Zugriff (Port 80) zu DMZ-Server erlauben
-        if dst == IPAddr("10.0.2.2") and proto == ipv4.TCP_PROTOCOL and dport == 80:
+        if dst == IPAddr("10.2.1.100") and proto == ipv4.TCP_PROTOCOL and dport == 80:
             log.debug("ACL: HTTP-Zugriff zu DMZ-Server erlaubt")
             return False
 
         # Regel 2: Gesamten Traffic aus externem Netz blockieren
-        if src.inNetwork("10.0.3.0/24"):
+        if src.inNetwork("10.3.1.0/24"):
             log.debug("ACL: Traffic aus externem Netz blockiert")
             return True
 
         # Regel 3: SSH von internem Netz zur DMZ blockieren
-        if src.inNetwork("10.0.1.0/24") and dst.inNetwork("10.0.2.0/24") and proto == ipv4.TCP_PROTOCOL and dport == 22:
+        if src.inNetwork("10.1.1.0/24") and dst.inNetwork("10.2.1.0/24") and proto == ipv4.TCP_PROTOCOL and dport == 22:
             log.debug("ACL: SSH von internem zu DMZ-Netz blockiert")
             return True
 
