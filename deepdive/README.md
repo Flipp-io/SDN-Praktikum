@@ -92,25 +92,47 @@ if src.inNetwork("10.1.1.0/24") and dst.inNetwork("10.2.1.0/24") and proto == ip
 3. **Ports konfigurieren:** Services-spezifische Regeln
 4. **Testen:** Mit Mininet-Szenarien validieren
 
-## Logging und Debugging
+---
 
-### Controller-Logs
-- **Firewall-Entscheidungen:** Erlaubt/Blockiert
-- **Routing-Entscheidungen:** L3-Switch
-- **ARP-Handling:** MAC-Auflösung
-- **Flow-Installation:** Performance-Optimierung
+## Deepdive: Erweiterte SDN-Implementierungen
 
-### Mininet-Debugging
-- **Ping-Tests:** Konnektivität prüfen
-- **Port-Tests:** Service-Zugriffe testen
-- **Flow-Table:** Routing-Entscheidungen analysieren
-- **Host-Terminals:** Direkte Tests auf Hosts
+Für fortgeschrittene Anwender und zusätzliche Experimente haben wir erweiterte SDN-Implementierungen im `deepdive/` Ordner erstellt.
 
-## Nächste Schritte
+### Verfügbare Erweiterungen
 
-1. **Firewall-Regeln erweitern:** Weitere Sicherheitsrichtlinien
-2. **Monitoring hinzufügen:** Netzwerk-Überwachung
-3. **Load-Balancing:** Mehrere Server
-4. **VLAN-Support:** Virtuelle Netzwerke
-5. **QoS:** Quality of Service
-6. **Intrusion Detection:** Angriffserkennung 
+#### L2 Learning Switch mit Firewall
+- **Datei:** `deepdive/l2_switch_with_firewall.py`
+- **Features:** MAC-Learning + IP-basierte Firewall
+- **Verwendung:** `~/pox/pox.py deepdive.l2_switch_with_firewall samples.pretty_log --DEBUG`
+
+#### Layer 3 Switch mit Firewall  
+- **Datei:** `deepdive/l3_switch_with_firewall.py`
+- **Features:** IP-Routing + ARP-Handling + Subnetz-basierte Firewall
+- **Verwendung:** `~/pox/pox.py deepdive.l3_switch_with_firewall samples.pretty_log --DEBUG`
+
+#### Enterprise-Netzwerk Topologie
+- **Datei:** `deepdive/enterprise_network_topo.py`
+- **Features:** 27 Hosts in 5 Subnetzen (Büros, DMZ, Server-Farm, Management)
+- **Verwendung:** `sudo mn --custom deepdive.enterprise_network_topo --topo enterprise --controller=remote,ip=127.0.0.1,port=6633 --mac -x`
+
+### Hilfedateien
+- **`deepdive/firewall_help.py`:** Umfassende Firewall-Regel Beispiele
+- **`deepdive/enterprise_firewall_rules.py`:** Enterprise-spezifische Sicherheitsrichtlinien
+
+### Dokumentation
+Siehe `deepdive/README.md` für detaillierte Anleitungen, Demo-Szenarien und Vergleichstabellen.
+
+### Demo-Szenarien
+```bash
+# Enterprise-Topologie mit L3 Switch
+~/pox/pox.py l3_switch_with_firewall samples.pretty_log --DEBUG
+sudo mn --custom enterprise_network_topo --topo enterprise --controller=remote,ip=127.0.0.1,port=6633 --mac -x
+
+# Tests
+mininet> h15 ping h8      # Externer → Webserver (erlaubt)
+mininet> h15 ping h19     # Externer → MySQL (blockiert)
+mininet> h1 ping h8       # Büro-Client → Webserver (erlaubt)
+mininet> h6 ping h25      # IT-Admin → Monitoring (erlaubt)
+```
+
+Diese Erweiterungen demonstrieren die vollen möglichkeiten von SDN mit realistischen Enterprise-Szenarien und erweiterten Sicherheitsfunktionen.
