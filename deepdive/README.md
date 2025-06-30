@@ -1,40 +1,115 @@
-# SDN Deepdive: L3-Switch mit Firewall
+# SDN Deepdive: Enterprise-Netzwerk mit L3-Switch & Firewall
 
-Dieses Verzeichnis enthält fortgeschrittene SDN-Beispiele für Mininet und POX, insbesondere einen Layer-3-Switch mit integrierter Firewall und eine realistische Enterprise-Topologie.
+Dieses Projekt richtet sich an Studierende, Lehrende und SDN-Interessierte, die praxisnah die Möglichkeiten von Software Defined Networking (SDN) mit Mininet und POX erkunden wollen. Im Fokus stehen ein Layer-3-Switch mit zentraler Firewall und eine realistische Enterprise-Netzwerk-Topologie.
 
-## Features
-- **L3-Switch mit Firewall:** Routing zwischen Subnetzen, ARP-Handling, zentrale ACL/Firewall-Logik, Flow-Installation
-- **Enterprise-Topologie:** Mehrere Subnetze (intern, DMZ, extern, Server, Management) mit jeweils eigenem Switch und zentralem Router-Switch
-- **Zentrale, dynamische Steuerung:** SDN-typische Policy-Änderungen im laufenden Betrieb
+---
 
-## Dateien
-- `l3_switch_with_firewall.py`: POX-Controller mit L3-Routing und Firewall-Logik
-- `enterprise_network_topo.py`: Mininet-Topologie mit mehreren Subnetzen und zentralem Router
+## Überblick & Zielsetzung
+
+- **Ziel:** Realistische Enterprise-Topologie mit mehreren Sicherheitszonen (Büro, DMZ, Extern, Server, Management) und zentral gesteuerter Firewall-Logik.
+- **Lernziele:**
+  - Verständnis von SDN-Prinzipien (Trennung von Control & Data Plane)
+  - Policy-Änderungen im laufenden Betrieb
+  - Netzwerksegmentierung und Security durch zentrale ACLs
+
+---
+
+## Netzwerk-Topologie
+
+**Grafische Übersicht:**
+
+```mermaid
+flowchart TD
+    subgraph Internes_Netzwerk["Internes Netzwerk (10.1.1.0/24)"]
+        h1["h1\\n10.1.1.10"]
+        h2["h2\\n10.1.1.11"]
+        h3["h3\\n10.1.1.12"]
+        s1["Switch s1"]
+        h1 --> s1
+        h2 --> s1
+        h3 --> s1
+    end
+    subgraph DMZ["DMZ (10.2.1.0/24)"]
+        h8["h8\\n10.2.1.100"]
+        h9["h9\\n10.2.1.101"]
+        s2["Switch s2"]
+        h8 --> s2
+        h9 --> s2
+    end
+    subgraph Externes_Netz["Externes Netz (10.3.1.0/24)"]
+        h15["h15\\n10.3.1.200"]
+        h16["h16\\n10.3.1.201"]
+        s3["Switch s3"]
+        h15 --> s3
+        h16 --> s3
+    end
+    subgraph Server_Farm["Server-Farm (10.4.1.0/24)"]
+        h19["h19\\n10.4.1.220"]
+        h20["h20\\n10.4.1.221"]
+        s4["Switch s4"]
+        h19 --> s4
+        h20 --> s4
+    end
+    subgraph Management["Management (10.5.1.0/24)"]
+        h25["h25\\n10.5.1.250"]
+        h26["h26\\n10.5.1.251"]
+        s5["Switch s5"]
+        h25 --> s5
+        h26 --> s5
+    end
+    s1 --> r1["Router-Switch (r1)"]
+    s2 --> r1
+    s3 --> r1
+    s4 --> r1
+    s5 --> r1
+```
+
+**Tabellarische Übersicht:**
+
+| Zone         | Subnetz         | Hosts (Beispiel)         |
+|--------------|-----------------|--------------------------|
+| Intern       | 10.1.1.0/24     | h1, h2, h3               |
+| DMZ          | 10.2.1.0/24     | h8, h9                   |
+| Extern       | 10.3.1.0/24     | h15, h16                 |
+| Server-Farm  | 10.4.1.0/24     | h19, h20                 |
+| Management   | 10.5.1.0/24     | h25, h26                 |
+
+---
+
+## Dateien & Komponenten
+
+- `l3_switch_with_firewall.py`: POX-Controller mit L3-Routing und zentraler Firewall-Logik
+- `enterprise_network_topo.py`: Mininet-Topologie mit 5 Subnetzen und zentralem Router
 - `firewall_help.py`: Beispiele und Hilfestellungen für Firewall/ACL-Regeln
+- `enterprise_firewall_rules.py`: Enterprise-spezifische Sicherheitsrichtlinien
+
+---
 
 ## Nutzung
+
 1. **Mininet-Topologie starten:**
    ```sh
    sudo mn --custom deepdive/enterprise_network_topo.py --topo enterprise --controller=remote,ip=127.0.0.1,port=6633 --mac -x
    ```
 2. **POX-Controller starten:**
    ```sh
-   ~/pox/pox.py l3_switch_with_firewall samples.pretty_log --DEBUG
+   ~/pox/pox.py deepdive.l3_switch_with_firewall samples.pretty_log --DEBUG
    ```
 3. **Hosts konfigurieren:**
    - Die Default-Gateways sind in der Topologie bereits gesetzt.
    - Prüfe mit `h1 route -n` etc.
 
-4. **Tests:**
-   - `h1 ping h2` (innerhalb Subnetz)
-   - `h1 ping h8` (zwischen Subnetzen)
-   - `h1 curl 10.2.1.100` (HTTP zu DMZ)
-   - `h15 ping 10.1.1.10` (aus externem Netz, sollte geblockt werden)
-   - `h1 ssh 10.2.1.100` (SSH zu DMZ, sollte geblockt werden)
+---
 
-## Beispiel: Firewall-Regeln
-Die ACL-Regeln werden zentral im Controller gesetzt (siehe `_is_blocked_by_acl`).
+## L3-Switch mit Firewall: Funktionsweise
 
+- **IP-Routing** zwischen Subnetzen (jede Zone ist ein eigenes Subnetz)
+- **ARP-Handling**: Automatische MAC-Auflösung, ARP-Cache
+- **Firewall/ACL**: Zentrale Methode `_is_blocked_by_acl` prüft für jedes Paket anhand von Quell-/Ziel-IP, Protokoll und Port, ob es geblockt wird
+- **Flow-Installation**: Erlaubte und geblockte Flows werden direkt auf dem Switch installiert (Effizienz, Logging)
+- **MAC-Learning** für lokale Kommunikation
+
+**Beispiel: Firewall-Regeln (aus `_is_blocked_by_acl`)**
 ```python
 # HTTP zu DMZ erlauben
 if dst == IPAddr("10.2.1.100") and proto == ipv4.TCP_PROTOCOL and dport == 80:
@@ -45,94 +120,69 @@ if src.inNetwork("10.3.1.0/24"):
 # SSH von intern zu DMZ blockieren
 if src.inNetwork("10.1.1.0/24") and dst.inNetwork("10.2.1.0/24") and proto == ipv4.TCP_PROTOCOL and dport == 22:
     return True
+# Standard: alles erlauben
+return False
 ```
-
-## Vorteile von SDN (für die Demo)
-- **Zentrale Steuerung:** Eine Codezeile im Controller ändert das Verhalten des gesamten Netzes.
-- **Dynamik:** Regeln können im laufenden Betrieb angepasst werden.
-- **Effizienz:** Geblockte Flows werden direkt auf Switch-Ebene installiert (Drop-Flow).
-
-## Hinweise für Studierende
-- Ihr könnt beliebige ACL-Regeln ergänzen oder ändern.
-- Nutzt das Log für Debugging (`--DEBUG`).
-- Probiert verschiedene Szenarien (HTTP, SSH, Ping, Subnetze, ...).
-- Die Topologie und der Controller sind modular und können leicht erweitert werden.
-
-## Vergleich L2 vs L3 Switch
-
-| Feature | L2 Switch | L3 Switch |
-|---------|-----------|-----------|
-| **Routing** | MAC-basiert | IP-basiert |
-| **Subnetze** | Ein Subnetz | Mehrere Subnetze |
-| **ARP-Handling** | Einfach | Vollständig |
-| **Firewall** | IP-basiert | Subnetz-basiert |
-| **Skalierbarkeit** | Begrenzt | Hoch |
-| **Komplexität** | Niedrig | Mittel |
-
-## Sicherheitsfeatures
-
-### Firewall-Funktionalität
-- **ACL-Regeln:** Statische Zugriffskontrolllisten
-- **Protokoll-Filterung:** TCP, UDP, ICMP
-- **Port-basierte Regeln:** Spezifische Services
-- **Subnetz-basierte Regeln:** Netzwerk-Segmentierung
-- **Logging:** Detaillierte Firewall-Logs
-
-### Enterprise-Sicherheit
-- **DMZ-Isolation:** Öffentliche Server abgeschottet
-- **Server-Farm-Schutz:** Datenbanken nur für Anwendungen
-- **Management-Netzwerk:** Nur IT-Admins
-- **Externe Zugriffe:** Eingeschränkt auf DMZ
-- **Interne Kommunikation:** Rollenbasierte Zugriffe
-
-## Anpassung der Firewall-Regeln
-
-1. **Regeln kopieren:** Aus `enterprise_firewall_rules.py` in Controller
-2. **IP-Adressen anpassen:** An deine Topologie anpassen
-3. **Ports konfigurieren:** Services-spezifische Regeln
-4. **Testen:** Mit Mininet-Szenarien validieren
 
 ---
 
-## Deepdive: Erweiterte SDN-Implementierungen
+## Demo-Szenarien & Testfälle
 
-Für fortgeschrittene Anwender und zusätzliche Experimente haben wir erweiterte SDN-Implementierungen im `deepdive/` Ordner erstellt.
+| Testbefehl                  | Beschreibung                        | Erwartung           |
+|-----------------------------|-------------------------------------|---------------------|
+| h1 ping h2                  | Intern zu intern                    | Erlaubt             |
+| h1 ping h8                  | Intern zu DMZ                       | Erlaubt             |
+| h1 ssh 10.2.1.100           | Intern zu DMZ (SSH)                 | Blockiert           |
+| h15 ping h8                 | Extern zu DMZ                       | Erlaubt             |
+| h15 ping h19                | Extern zu Server-Farm               | Blockiert           |
+| h25 ssh 10.5.1.251          | Management zu Management            | Erlaubt             |
 
-### Verfügbare Erweiterungen
+Weitere Szenarien und Tipps findest du in `enterprise_firewall_rules.py` und `firewall_help.py`.
 
-#### L2 Learning Switch mit Firewall
-- **Datei:** `deepdive/l2_switch_with_firewall.py`
-- **Features:** MAC-Learning + IP-basierte Firewall
-- **Verwendung:** `~/pox/pox.py deepdive.l2_switch_with_firewall samples.pretty_log --DEBUG`
+---
 
-#### Layer 3 Switch mit Firewall  
-- **Datei:** `deepdive/l3_switch_with_firewall.py`
-- **Features:** IP-Routing + ARP-Handling + Subnetz-basierte Firewall
-- **Verwendung:** `~/pox/pox.py deepdive.l3_switch_with_firewall samples.pretty_log --DEBUG`
+## Vorteile von SDN (für die Demo)
 
-#### Enterprise-Netzwerk Topologie
-- **Datei:** `deepdive/enterprise_network_topo.py`
-- **Features:** 27 Hosts in 5 Subnetzen (Büros, DMZ, Server-Farm, Management)
-- **Verwendung:** `sudo mn --custom deepdive.enterprise_network_topo --topo enterprise --controller=remote,ip=127.0.0.1,port=6633 --mac -x`
+- **Zentrale Steuerung:** Eine Codezeile im Controller ändert das Verhalten des gesamten Netzes.
+- **Dynamik:** Regeln können im laufenden Betrieb angepasst werden.
+- **Effizienz:** Geblockte Flows werden direkt auf Switch-Ebene installiert (Drop-Flow).
+- **Transparenz:** Logging und Flow-Table-Analyse ermöglichen gezieltes Troubleshooting.
 
-### Hilfedateien
-- **`deepdive/firewall_help.py`:** Umfassende Firewall-Regel Beispiele
-- **`deepdive/enterprise_firewall_rules.py`:** Enterprise-spezifische Sicherheitsrichtlinien
+---
 
-### Dokumentation
-Siehe `deepdive/README.md` für detaillierte Anleitungen, Demo-Szenarien und Vergleichstabellen.
+## Hinweise zur Erweiterung & Troubleshooting
 
-### Demo-Szenarien
-```bash
-# Enterprise-Topologie mit L3 Switch
-~/pox/pox.py l3_switch_with_firewall samples.pretty_log --DEBUG
-sudo mn --custom enterprise_network_topo --topo enterprise --controller=remote,ip=127.0.0.1,port=6633 --mac -x
+- **Eigene ACL-Regeln:** Ergänze oder ändere Regeln in `_is_blocked_by_acl` im Controller.
+- **Debugging:** Nutze das Log (`--DEBUG`) und prüfe die Flow-Table (`dpctl dump-flows`).
+- **Subnetz-Masken:** Achte darauf, dass die Subnetze in den Regeln zu den Host-IPs passen!
+- **Reihenfolge:** Die erste passende Regel zählt. Schreibe spezifische Regeln zuerst, allgemeine zuletzt.
+- **Protokoll-IDs:**
+  - ICMP: `ipv4.ICMP_PROTOCOL`
+  - TCP: `ipv4.TCP_PROTOCOL`
+  - UDP: `ipv4.UDP_PROTOCOL`
 
-# Tests
-mininet> h15 ping h8      # Externer → Webserver (erlaubt)
-mininet> h15 ping h19     # Externer → MySQL (blockiert)
-mininet> h1 ping h8       # Büro-Client → Webserver (erlaubt)
-mininet> h6 ping h25      # IT-Admin → Monitoring (erlaubt)
-```
+---
 
-Diese Erweiterungen demonstrieren die vollen möglichkeiten von SDN mit realistischen Enterprise-Szenarien und erweiterten Sicherheitsfunktionen.
+## Didaktische Hinweise
+
+- **Warum SDN?**
+  - Policies und Security zentral und dynamisch steuern
+  - Netzwerksegmentierung und -sicherheit realistisch simulieren
+  - Ideal für Lehre, Workshops und Experimente
+- **Empfohlene Übungen:**
+  - Eigene Firewall-Policies entwerfen und testen
+  - Unterschied L2/L3 Switch praktisch erleben
+  - Live-Änderungen und deren Auswirkungen beobachten
+
+---
+
+## Weiterführende Dateien & Links
+
+- `deepdive/firewall_help.py`: Viele weitere Regelbeispiele und Tipps
+- `deepdive/enterprise_firewall_rules.py`: Enterprise-spezifische Policies und Demo-Szenarien
+- [Mininet Doku](http://mininet.org/walkthrough/)
+- [POX Doku](https://noxrepo.github.io/pox-doc/html/)
+
+---
+
+Mit dieser Umgebung kannst du SDN und Netzwerksicherheit realitätsnah und flexibel erleben. Viel Spaß beim Deep Dive! 🎓
