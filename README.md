@@ -11,7 +11,7 @@ Copy/Paste in der VM:
 Geteilte Zwischenablage anschalten:  
 - Im VM-Fenster unter Geräte -> Gemeinsame Zwischenablage -> bidirektional 
 
-Falls die geteilte Zwischenablage immer noch nicht funktioniert, folgendes nachinstallieren:
+Falls die geteilte Zwischenablage nicht funktioniert, folgendes nachinstallieren:
 ```bash
 sudo apt install virtualbox-guest-x11
 ```
@@ -190,7 +190,7 @@ Erweitert die Logik-Regeln, sodass sie auf ganze Subnetze angewendet werden und 
 ### Fragen 
 1. Was fällt euch auf, wenn ihr euch die Flowtable ausgeben lasst? Was passiert mit den Paketen? (Befehl in Mininet: "dpctl dump-flows --color=always")
 
-2. Bisher werden nur für die erlaubten Pakete Flows in den Switches installiert. Was passiert mit den anderen Paketen? Was hat das für eine Auswirkung? Kann man als Angreifer dieses Verhalten ggf ausnutzen? Wie kann man das Problem lösen?
+2. Bisher werden nur für die erlaubten Pakete Flows in den Switches installiert. Was passiert mit den anderen Paketen? Was hat das für eine Auswirkung? Kann man als Angreifer dieses Verhalten ggf. ausnutzen? Wie kann man das Problem lösen?
 
 3. Was ist der Unterschied zwischen einer SDN-basierten Firewall und einer traditionellen Firewall?
 
