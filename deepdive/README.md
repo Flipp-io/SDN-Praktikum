@@ -139,17 +139,6 @@ return False
 
 Weitere Szenarien und Tipps findest du in `enterprise_firewall_rules.py` und `firewall_help.py`.
 
----
-
-## Vorteile von SDN (für die Demo)
-
-- **Zentrale Steuerung:** Eine Codezeile im Controller ändert das Verhalten des gesamten Netzes.
-- **Dynamik:** Regeln können im laufenden Betrieb angepasst werden.
-- **Effizienz:** Geblockte Flows werden direkt auf Switch-Ebene installiert (Drop-Flow).
-- **Transparenz:** Logging und Flow-Table-Analyse ermöglichen gezieltes Troubleshooting.
-
----
-
 ## Hinweise zur Erweiterung & Troubleshooting
 
 - **Eigene ACL-Regeln:** Ergänze oder ändere Regeln in `_is_blocked_by_acl` im Controller.
@@ -161,28 +150,9 @@ Weitere Szenarien und Tipps findest du in `enterprise_firewall_rules.py` und `fi
   - TCP: `ipv4.TCP_PROTOCOL`
   - UDP: `ipv4.UDP_PROTOCOL`
 
----
-
-## Didaktische Hinweise
-
-- **Warum SDN?**
-  - Policies und Security zentral und dynamisch steuern
-  - Netzwerksegmentierung und -sicherheit realistisch simulieren
-  - Ideal für Lehre, Workshops und Experimente
-- **Empfohlene Übungen:**
-  - Eigene Firewall-Policies entwerfen und testen
-  - Unterschied L2/L3 Switch praktisch erleben
-  - Live-Änderungen und deren Auswirkungen beobachten
-
----
 
 ## Weiterführende Dateien & Links
 
 - `deepdive/firewall_help.py`: Viele weitere Regelbeispiele und Tipps
 - `deepdive/enterprise_firewall_rules.py`: Enterprise-spezifische Policies und Demo-Szenarien
-- [Mininet Doku](http://mininet.org/walkthrough/)
-- [POX Doku](https://noxrepo.github.io/pox-doc/html/)
 
----
-
-Mit dieser Umgebung kannst du SDN und Netzwerksicherheit realitätsnah und flexibel erleben. Viel Spaß beim Deep Dive! 🎓
