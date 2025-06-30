@@ -21,38 +21,38 @@ Dieses Projekt richtet sich an Studierende, Lehrende und SDN-Interessierte, die 
 ```mermaid
 flowchart TD
     subgraph Internes_Netzwerk["Internes Netzwerk (10.1.1.0/24)"]
-        h1["h1\\n10.1.1.10"]
-        h2["h2\\n10.1.1.11"]
-        h3["h3\\n10.1.1.12"]
+        h1["h1 <br> 10.1.1.10"]
+        h2["h2 <br> 10.1.1.11"]
+        h3["h3 <br> 10.1.1.12"]
         s1["Switch s1"]
         h1 --> s1
         h2 --> s1
         h3 --> s1
     end
     subgraph DMZ["DMZ (10.2.1.0/24)"]
-        h8["h8\\n10.2.1.100"]
-        h9["h9\\n10.2.1.101"]
+        h8["h8<br>10.2.1.100"]
+        h9["h9<br>10.2.1.101"]
         s2["Switch s2"]
         h8 --> s2
         h9 --> s2
     end
     subgraph Externes_Netz["Externes Netz (10.3.1.0/24)"]
-        h15["h15\\n10.3.1.200"]
-        h16["h16\\n10.3.1.201"]
+        h15["h15<br>10.3.1.200"]
+        h16["h16<br>10.3.1.201"]
         s3["Switch s3"]
         h15 --> s3
         h16 --> s3
     end
     subgraph Server_Farm["Server-Farm (10.4.1.0/24)"]
-        h19["h19\\n10.4.1.220"]
-        h20["h20\\n10.4.1.221"]
+        h19["h19<br>10.4.1.220"]
+        h20["h20<br>10.4.1.221"]
         s4["Switch s4"]
         h19 --> s4
         h20 --> s4
     end
     subgraph Management["Management (10.5.1.0/24)"]
-        h25["h25\\n10.5.1.250"]
-        h26["h26\\n10.5.1.251"]
+        h25["h25<br>10.5.1.250"]
+        h26["h26<br>n10.5.1.251"]
         s5["Switch s5"]
         h25 --> s5
         h26 --> s5
