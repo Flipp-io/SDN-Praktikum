@@ -161,19 +161,12 @@ h1> curl 10.0.0.2
 ```bash
 h1> ssh 10.0.0.2
 ```
-Wenn jeder Host von allen anderen Erreicht werden konnte, ist das Netzwerk korrekt konfiguriert. Nun geht es darum, den Zugriff auf den Server und den internen Client zu steuern und ggf zu blockieren.  
+Wenn jeder Host von allen anderen Erreicht werden konnte, ist das Netzwerk korrekt konfiguriert. Nun geht es darum, den Zugriff auf den Server und den internen Client zu steuern und ggf. zu blockieren.  
 
 #### Aufgaben
 - Schaut euch den Code des POX-Controllers an (Datei 'pox_firewall_acl.py') und versucht ihn nachzuvollziehen (bspw mit dem Editor "emacs" öffnen)
 - Welche Informationen eines eintreffenden Pakets werden extrahiert?
-- Überlegt euch sinnvolle Regeln, die die Sicherheit im Netzwerk erhöhen und bspw. den Zugriff auf die Server-Dienste steuern (ein bis zwei Regeln reichen zunäcsht aus). Die Regeln können zunächst mit Worten formuliert werden.
-    - Regelsatz der Musterlösung:
-        - keinen Traffic vom externen Client zulassen bis auf Zugriff auf den HTTP-Server
-        - der interne Client darf alles, bis auf SSH zu h2
-    - zusätzliche Mögliche Regeln:
-        - ICMP (Ping) von h3 zu h2 blockieren
-        - aber HTTP von h3 zu h2 erlauben
-        - ICMP und HTTP von h1 zu h2 erlauben
+- Überlegt euch sinnvolle Regeln, die die Sicherheit im Netzwerk erhöhen und bspw. den Zugriff auf die Server-Dienste steuern (ein bis zwei Regeln reichen zunächst aus). Die Regeln können zunächst mit Worten formuliert werden.
 - Implementiert die Regeln im Code (in der 'is_blocked'-Methode)
 - Überprüft, ob die Regeln wirksam sind, indem ihr die Erreichbarkeit der Hosts und Server-Dienste prüft und die Flowtabelle anschaut.
 
