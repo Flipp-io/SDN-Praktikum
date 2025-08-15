@@ -2,13 +2,12 @@
 
 ## Vorbereitung
 
-Username und Passwort für die VM:  
-- mininet / mininet  
+Die folgenden Schritte sind vor dem Praktikum auszuführen, um sicherzustellen, dass eine funktionierende Arbeitsumgebung vorliegt.  
 
-Copy/Paste in der VM:
-- STRG+SHIFT+C / STRG+SHIFT+V
+---
 
-Geteilte Zwischenablage anschalten:  
+### geteilte Zwischenablage einrichten
+Um zwischen Hostsystem und virtueller Maschine kopieren zu können, die geteilte Zwischenablage anschalten:  
 - Im VM-Fenster unter Geräte -> Gemeinsame Zwischenablage -> bidirektional 
 
 Falls die geteilte Zwischenablage nicht funktioniert, folgendes nachinstallieren:
@@ -20,51 +19,41 @@ Und dann die geteilte Zwischenablage starten:
 sudo VBoxClient --clipboard
 ```
 
+Copy/Paste in der VM mithilfe der Tastenkombinationen:
+- STRG+SHIFT+C / STRG+SHIFT+V
+
+---
+
+### Repository klonen
 Ihr könnt dieses Repo in das Home-Verzeichnis der Mininet-VM clonen, um die Dateien nicht händisch kopieren zu müssen:
 ```bash
 cd ~
 git clone https://github.com/Flipp-io/SDN-Praktikum.git
 ```
-Den Befehl zum Starten der Topologie führt ihr dann aus dem geclonten Ordner heraus aus. (also ~/SDN-Praktikum)
+Den Befehl zum Starten der Mininet-Topologie führt ihr dann aus dem geclonten Ordner heraus aus. (also ~/SDN-Praktikum)
 
-Curl installieren:
+
+### Curl installieren
+Um von der Kommandozeile auf einen Webserver zugreifen zu können:
 ```bash
 sudo apt install curl
 ```
 
 
----
-
-## Wichtige Mininet-Befehle
-Wenn ein Befehl mit "mininet>" beginnt, ist er in der Mininet-CLI auszuführen. Wenn er mit "h1>" beginnt, ist er im Terminal-Fenster des Hosts h1 auszuführen.
-
-Zwischen allen Hosts pingen:
-```bash
-mininet> pingall
-```
-
-Die Flowtable des Switches ausgeben:
-```bash
-mininet> dpctl dump-flows --color=always
-```
-
-Die Topologie beenden:
-```bash
-mininet> exit
-```
 
 ---
 
-## Aufgabe A. Aufwärmübung: Mininet mit POX verwenden
-Dieses erste Szenario soll helfen, euch mit Mininet und Pox vertraut zu machen. Das Prinzip von SDN wird hier zunächst auf Layer 2 umgesetzt, indem ein Switch neue Flowtable-Einträge von einem Controller zugewiesen bekommt.
+### Aufgabe zum Testen der Installation und Aufwärmübung: Mininet mit POX verwenden
+Um zu prüfen, ob die Mininet-Umgebung funktioniert, führt bitte folgende Befehle aus. Es wird zunächst ein SDN-Controller gestartet. Anschließend wird eine simple Mininet-Topologie mit einem Netzwerk-Switch gestartet, welcher sich mit dem Controller verbindet.
 
-### 1. POX-Controller starten
+
+#### 1. POX-Controller starten
 Startet den POX-SDN-Controller mit dem Layer2-Lernswitch-Modul und Debug-Ausgaben.
 ```bash
 ~/pox/pox.py forwarding.l2_learning samples.pretty_log --DEBUG
 ```
 
-### 2. Mininet starten
+#### 2. Mininet starten
 Startet in einer zweiten Bash eine Mininet-Topologie mit externem Controller:
 ```bash
 sudo mn --topo=single,2 --controller=remote,port=6633 --mac -x
@@ -73,13 +62,14 @@ Hinweise zu den Optionen:
 - '--mac' -> die Hosts erhalten einfacher zu lesende MAC-Adressen  
 - '-x' -> öffnet für jeden Host ein eigenes Terminal-Fenster.
 
-### 3. Testen mit `ping`
+#### 3. Erreichbarkeit testen
+Mit "ping" testen, ob sich die Hosts in der Topologie erreichen können.
 ```bash
 mininet> pingall
 ```
 Können sich die Hosts gegenseitig erreichen? Achtet auch auf die Ausgabe des Controllers.
 
-### 4. Flowtable des Switches ausgeben lassen
+#### 4. Flowtable des Switches ausgeben lassen
 ```bash
 mininet> dpctl dump-flows --color=always
 ```
