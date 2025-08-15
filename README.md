@@ -2,11 +2,11 @@
 
 ## Vorbereitung
 
-Die folgenden Schritte sind vor dem Praktikum auszuführen, um sicherzustellen, dass eine funktionierende Arbeitsumgebung vorliegt.  
+Die folgenden Schritte sind vor dem Praktikum auszuführen, um sicherzustellen, dass eine funktionierende Arbeitsumgebung vorliegt. Anschließend bearbeitet bitte die Vorbereitungsaufgabe, damit ihr mit der grundlegenden Handhabung von Mininet vertraut werden. Lest euch bitte die gesamte Praktikumsaufgabe durch, damit ihr wisst, was auf euch zukommt.  
 
 ---
 
-### geteilte Zwischenablage einrichten
+### Geteilte Zwischenablage einrichten
 Um zwischen Hostsystem und virtueller Maschine kopieren zu können, die geteilte Zwischenablage anschalten:  
 - Im VM-Fenster unter Geräte -> Gemeinsame Zwischenablage -> bidirektional 
 
@@ -40,8 +40,9 @@ sudo apt install curl
 ```
 
 
-
 ---
+
+
 
 ### Aufgabe zum Testen der Installation und Aufwärmübung: Mininet mit POX verwenden
 Um zu prüfen, ob die Mininet-Umgebung funktioniert, führt bitte folgende Befehle aus. Es wird zunächst ein SDN-Controller gestartet. Anschließend wird eine simple Mininet-Topologie mit einem Netzwerk-Switch gestartet, welcher sich mit dem Controller verbindet.
@@ -84,13 +85,17 @@ Wie soll der Switch laut Tabelle mit den Paketen der Flows umgehen?
 
 
 
-## Aufgabe B. SDN-Firewall mit statischer ACL
+## Praktikums-Aufgabe: SDN-Firewall mit statischer ACL
 In diesem Versuch sollt ihr eine einfache Firewall mit statischen Regeln implementieren, die den Verkehr basierend auf IP-Adressen, Protokollen und Ports blockiert oder erlaubt. Die Filter-Regeln sollt ihr selbst festlegen und im Code umsetzen.
 
+---
+**Was ist eine Firewall?**  
+Eine Firewall ist ein Sicherheitsmechanismus, der den Datenverkehr zwischen verschiedenen Netzwerken oder Subnetzen kontrolliert. Sie kann Pakete basierend auf vordefinierten Regeln blockieren oder zulassen, um unautorisierten Zugriff zu verhindern und die Sicherheit des Netzwerks zu erhöhen.
 
-### Vorbereitung
+---
 
-#### POX-Modul
+
+### POX-Modul
 Der Großteil des Controller-Codes ist bereits für euch vorbereitet. Speichert die Datei "pox_firewall_acl.py" im Verzeichnis "~/pox" ab.
 Falls ihr das Repo ins Home-Verzeichnis geclonet habt, könnt ihr die Datei mit folgendem Befehl an die richtige Stelle kopieren:
 ```bash
@@ -103,16 +108,16 @@ Der Controller kann mit diesem Befehl gestartet werden:
 ```
 
 
-#### Mininet-Topologie
+### Mininet-Topologie
 Der Code für die Netzwerktopologie ist in der Datei "custom_topo.py" zu finden.  
-Diese Topologie enthält einen internen Client (h1), einen Server (h2) und einen externen Client (h3). Alle Hosts befinden sich im selben Subnetz (10.0.0.0/24). Auf h2 sollen ein Webserver und ein SSH-Server laufen. Durch die Firewall soll der Server vor unberechtigtem Zugriff geschützt werden.  
+Diese Topologie enthält einen internen Client (h1), einen Server (h2) und einen externen Client (h3). Alle Hosts befinden sich im selben Subnetz (10.0.0.0/24). Auf h2 sollen verschiedene Server-Dienste laufen. Durch eine Firewall soll der Server vor unberechtigtem Zugriff geschützt werden.  
 Die Topologie kann mit diesem Befehl gestartet werden:
 ```bash
 sudo mn --custom custom_topo.py --topo sdnfirewall --controller=remote,ip=127.0.0.1,port=6633 --mac -x
 ```
 
 
-
+---
 
 
 ### Durchführung
@@ -151,10 +156,11 @@ h1> curl 10.0.0.2
 ```bash
 h1> ssh 10.0.0.2
 ```
-Wenn jeder Host von allen anderen Erreicht werden konnte, ist das Netzwerk korrekt konfiguriert. Nun geht es darum, den Zugriff auf den Server und den internen Client zu steuern und ggf. zu blockieren.  
+Wenn jeder Host von allen anderen erreicht werden konnte, ist das Netzwerk korrekt konfiguriert. Nun geht es darum, den Zugriff auf den Server und den internen Client zu steuern und ggf. zu blockieren.  
 
-#### Aufgaben
-- Schaut euch den Code des POX-Controllers an (Datei 'pox_firewall_acl.py') und versucht ihn nachzuvollziehen (bspw mit dem Editor "emacs" öffnen)
+
+### Aufgaben
+- Schaut euch den Code des POX-Controllers an (Datei 'pox_firewall_acl.py') und versucht ihn nachzuvollziehen (bspw mit dem Editor "emacs (GUI)" öffnen)
 - Welche Informationen eines eintreffenden Pakets werden extrahiert?
 - Überlegt euch sinnvolle Regeln, die die Sicherheit im Netzwerk erhöhen und bspw. den Zugriff auf die Server-Dienste steuern (ein bis zwei Regeln reichen zunächst aus). Die Regeln können zunächst mit Worten formuliert werden.
 - Implementiert die Regeln im Code (in der 'is_blocked'-Methode)
@@ -162,14 +168,14 @@ Wenn jeder Host von allen anderen Erreicht werden konnte, ist das Netzwerk korre
 
 
 ### Bonusaufgabe falls noch Zeit: Erweiterung auf IP-Subnetze
-Erweitert die Logik-Regeln, sodass sie auf ganze Subnetze angewendet werden und nicht nur auf einzelne Hosts. Dafür müssen andere IP-Adressen an die Hosts vergeben werden (anzupassen in der Mininet-Topologie).
+Erweitert die Logik-Regeln, sodass sie auf ganze Subnetze angewendet werden und nicht nur auf einzelne Hosts. Dafür müssen andere IP-Adressen an die Hosts vergeben werden (anzupassen in der Mininet-Topologie-Datei).
 - Setzt die Hosts in unterschiedliche "/24"-er Subnetze (zB. 10.0.1.0/24, 10.0.2.0/24, 10.0.3.0/24, ...). Für diese Subnetze legt ihr anschließend die Firewall-Regeln fest. Damit die Hosts sich grundsätzlich ohne Routing erreichen können, setzt ihre Netzmaske in der Topologie auf "/16" (zB. 10.0.1.1/16, 10.0.2.2/16, ...). Dadurch befinden sie sich in einem größeren Subnetz, die Regeln werden jedoch auf die kleineren Subnetze angewendet.
 - Passt die Filter-Regeln im Code an, sodass sie auf die neu erstellten Netze angewendet werden.
 - Fügt (einen) weitere(n) Host(s) in den verschiedenen Subnetzen hinzu oder ändert die IP-Adressen der vorhandenen Hosts. Prüft, ob die Regeln weiterhin wie gewünscht funktionieren.
 
 
 
-### Fragen zu Aufgabe B
+### Fragen zu den Aufgaben
 1. Was fällt euch auf, wenn ihr euch die Flowtable ausgeben lasst? Was passiert mit den Paketen? (Befehl in Mininet: "dpctl dump-flows --color=always")
 
 2. Bisher werden nur für die erlaubten Pakete Flows in den Switches installiert. Was passiert mit den anderen Paketen? Was hat das für eine Auswirkung? Kann man als Angreifer dieses Verhalten ggf. ausnutzen? Wie kann man das Problem lösen?
