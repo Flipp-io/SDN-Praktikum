@@ -71,7 +71,7 @@ flowchart TD
 | Intern       | 10.1.1.0/24     | h1, h2, h3               |
 | DMZ          | 10.2.1.0/24     | h8, h9                   |
 | Extern       | 10.3.1.0/24     | h15, h16                 |
-| Server-Farm  | 10.4.1.0/24     | h19, h20                 |
+| Server       | 10.4.1.0/24     | h19, h20                 |
 | Management   | 10.5.1.0/24     | h25, h26                 |
 
 ---
