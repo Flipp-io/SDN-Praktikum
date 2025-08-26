@@ -20,7 +20,7 @@ Dieses Projekt richtet sich an Studierende, Lehrende und SDN-Interessierte, die 
 
 ```mermaid
 flowchart TD
-    subgraph Internes_Netzwerk["Internes Netzwerk (10.1.1.0/24)"]
+    subgraph Internes_Netzwerk["Intern (10.1.1.0/24)"]
         h1["h1 <br> 10.1.1.10"]
         h2["h2 <br> 10.1.1.11"]
         h3["h3 <br> 10.1.1.12"]
@@ -36,14 +36,14 @@ flowchart TD
         h8 --> s2
         h9 --> s2
     end
-    subgraph Externes_Netz["Externes Netz (10.3.1.0/24)"]
+    subgraph Externes_Netz["Extern (10.3.1.0/24)"]
         h15["h15<br>10.3.1.200"]
         h16["h16<br>10.3.1.201"]
         s3["Switch s3"]
         h15 --> s3
         h16 --> s3
     end
-    subgraph Server_Farm["Server-Farm (10.4.1.0/24)"]
+    subgraph Server_Farm["Server (10.4.1.0/24)"]
         h19["h19<br>10.4.1.220"]
         h20["h20<br>10.4.1.221"]
         s4["Switch s4"]
