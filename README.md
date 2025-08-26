@@ -175,7 +175,7 @@ Erweitert die Logik-Regeln, sodass sie auf ganze Subnetze angewendet werden und 
 
 
 
-### Fragen zu den Aufgaben
+### Fragen zu den Aufgaben und für die Diskussionsrunde 
 1. Was fällt euch auf, wenn ihr euch die Flowtable ausgeben lasst? Was passiert mit den Paketen? (Befehl in Mininet: "dpctl dump-flows --color=always")
 
 2. Bisher werden nur für die erlaubten Pakete Flows in den Switches installiert. Was passiert mit den anderen Paketen? Was hat das für eine Auswirkung? Kann man als Angreifer dieses Verhalten ggf. ausnutzen? Wie kann man das Problem lösen?
