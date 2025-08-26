@@ -2,7 +2,7 @@
 
 ## Vorbereitung
 
-Die folgenden Schritte sind vor dem Praktikum auszuführen, um sicherzustellen, dass eine funktionierende Arbeitsumgebung vorliegt. Anschließend bearbeitet bitte die Vorbereitungsaufgabe, damit ihr mit der grundlegenden Handhabung von Mininet vertraut werden. Lest euch bitte die gesamte Praktikumsaufgabe durch, damit ihr wisst, was auf euch zukommt.  
+Die folgenden Schritte sind vor dem Praktikum auszuführen, um sicherzustellen, dass eine funktionierende Arbeitsumgebung vorliegt. Anschließend bearbeitet bitte die Vorbereitungsaufgabe, damit ihr mit der grundlegenden Handhabung von Mininet vertraut werdet. Lest euch bitte die gesamte Praktikumsaufgabe durch, damit ihr wisst, was auf euch zukommt.  
 
 ---
 
@@ -34,7 +34,7 @@ Den Befehl zum Starten der Mininet-Topologie führt ihr dann aus dem geclonten O
 
 
 ### Curl installieren
-Um von der Kommandozeile auf einen Webserver zugreifen zu können:
+Um von der Kommandozeile auf einen Webserver zugreifen zu können, folgendes Programm in der VM installieren:
 ```bash
 sudo apt install curl
 ```
