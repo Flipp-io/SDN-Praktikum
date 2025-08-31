@@ -80,7 +80,7 @@ flowchart TD
 
 - `l3_switch_with_firewall.py`: POX-Controller mit L3-Routing und zentraler Firewall-Logik
 - `enterprise_network_topo.py`: Mininet-Topologie mit 5 Subnetzen und zentralem Router
-- `firewall_help.py`: Beispiele und Hilfestellungen für Firewall/ACL-Regeln
+- `enterprise_firewall_cheatsheet.py`: Beispiele und Hilfestellungen für Firewall/ACL-Regeln
 - `enterprise_firewall_rules.py`: Enterprise-spezifische Sicherheitsrichtlinien
 
 ---
@@ -134,10 +134,10 @@ return False
 | h1 ping h8                  | Intern zu DMZ                       | Erlaubt             |
 | h1 ssh 10.2.1.100           | Intern zu DMZ (SSH)                 | Blockiert           |
 | h15 ping h8                 | Extern zu DMZ                       | Erlaubt             |
-| h15 ping h19                | Extern zu Server-Farm               | Blockiert           |
+| h15 ping h19                | Extern zu Server                    | Blockiert           |
 | h25 ssh 10.5.1.251          | Management zu Management            | Erlaubt             |
 
-Weitere Szenarien und Tipps findest du in `enterprise_firewall_rules.py` und `firewall_help.py`.
+Weitere Szenarien und Tipps findest du in `enterprise_firewall_rules.py` und `enterprise_firewall_cheatsheet.py`.
 
 ## Hinweise zur Erweiterung & Troubleshooting
 
@@ -153,6 +153,6 @@ Weitere Szenarien und Tipps findest du in `enterprise_firewall_rules.py` und `fi
 
 ## Weiterführende Dateien & Links
 
-- `deepdive/firewall_help.py`: Viele weitere Regelbeispiele und Tipps
+- `deepdive/enterprise_firewall_cheatsheet.py`: Viele weitere Regelbeispiele und Tipps
 - `deepdive/enterprise_firewall_rules.py`: Enterprise-spezifische Policies und Demo-Szenarien
 
